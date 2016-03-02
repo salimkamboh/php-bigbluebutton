@@ -1,0 +1,22 @@
+{
+    "name": "sanduhrs/php-bigbluebutton",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Stefan Auditor",
+            "email": "stefan.auditor@erdfisch.de"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "sanduhrs\\": "src/"
+        }
+    }
+}
