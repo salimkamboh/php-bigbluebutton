@@ -249,7 +249,7 @@ class Client
         } elseif (isset($response->message)) {
             throw new BigBlueButtonException($response->message);
         } else {
-            throw new BigBlueButtonException('An unknown error occured while communicating with the server.');
+            throw new BigBlueButtonException('An unknown error occurred while communicating with the server.');
         }
         return $response;
     }
