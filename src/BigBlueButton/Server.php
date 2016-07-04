@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains sanduhrs\BigBlueButton\Server.
- */
-
 namespace sanduhrs\BigBlueButton;
 
 use sanduhrs\BigBlueButton\BigBlueButtonException;

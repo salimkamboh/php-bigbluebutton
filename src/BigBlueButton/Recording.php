@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains sanduhrs\BigBlueButton\Recording.
- */
-
 namespace sanduhrs\BigBlueButton;
 
 use sanduhrs\BigBlueButton\Server;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains sanduhrs\BigBlueButton\Meeting.
- */
-
 namespace sanduhrs\BigBlueButton;
 
 use sanduhrs\BigBlueButton\Attendee;
