@@ -10,7 +10,7 @@ namespace sanduhrs\BigBlueButton;
 use sanduhrs\BigBlueButton\Server;
 
 /**
- * Class Recording
+ * Class Recording.
  *
  * @package sanduhrs\BigBlueButton
  */
@@ -81,6 +81,7 @@ class Recording
 
     /**
      * Recording constructor.
+     *
      * @param string $recordID
      * @param array $options
      * @param \sanduhrs\BigBlueButton\Client $client
