@@ -39,14 +39,14 @@ class BigBlueButton
      *
      * @var \sanduhrs\BigBlueButton\Server
      */
-    public $server;
+    protected $server;
 
     /**
      * The BigBlueButton client object.
      *
      * @var \sanduhrs\BigBlueButton\Client
      */
-    public $client;
+    protected $client;
 
 
     /**
