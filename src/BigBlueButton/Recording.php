@@ -111,6 +111,86 @@ class Recording
     }
 
     /**
+     * Get Record ID.
+     *
+     * @return string
+     */
+    public function getRecordID()
+    {
+        return $this->recordID;
+    }
+
+    /**
+     * Get Meeting ID.
+     *
+     * @return string
+     */
+    public function getMeetingID()
+    {
+        return $this->meetingID;
+    }
+
+    /**
+     * Get Name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Check if Recording is published.
+     *
+     * @return boolean
+     */
+    public function isPublished()
+    {
+        return $this->published;
+    }
+
+    /**
+     * Get Start Time.
+     *
+     * @return int
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Get End Time.
+     *
+     * @return int
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    /**
+     * Get Metadata.
+     *
+     * @return array
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Get Playback.
+     *
+     * @return array
+     */
+    public function getPlayback()
+    {
+        return $this->playback;
+    }
+
+    /**
      * Publish recording.
      *
      * @return mixed
