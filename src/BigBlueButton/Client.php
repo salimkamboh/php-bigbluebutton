@@ -7,7 +7,7 @@
 
 namespace sanduhrs\BigBlueButton;
 
-use GuzzleHttp\Client;
+use \GuzzleHttp\Client as HTTPClient;
 use sanduhrs\BigBlueButton\BigBlueButtonException;
 
 /**
@@ -223,7 +223,7 @@ class Client
         $options += [
             'checksum' => $this->checksum($call, $options),
         ];
-        $response = $this->client->request(
+        $response = $this->HTTPClient->request(
             'GET',
             $this->url . $this->endpoint . $call,
             ['query' => $options]
@@ -277,7 +277,7 @@ class Client
         $options += [
             'checksum' => $this->checksum($call, $options),
         ];
-        $response = $this->client->request(
+        $response = $this->HTTPClient->request(
             'POST',
             $this->url . $this->endpoint . $call,
             ['form_params' => $options]
