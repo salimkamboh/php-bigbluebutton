@@ -159,81 +159,219 @@ class Meeting
         $attendeePW,
         $moderatorPW,
         $options,
-        $client
+        Client $client
     ) {
+        $options = [
+            'createTime' => 0,
+            'createDate' => '',
+            'hasUserJoined' => null,
+            'duration' => 0,
+            'hasBeenForciblyEnded' => null,
+            'meetingName' => '',
+            'voiceBridge' => '',
+            'dialNumber' => '',
+            'running' => null,
+            'recording' => null,
+            'startTime' => 0,
+            'endTime' => '',
+            'participantCount' => 0,
+            'maxUsers' => 0,
+            'moderatorCount' => 0,
+            'attendees' => [],
+            'metadata' => [],
+            'recordings' => [],
+          ] + $options;
+
         $this->meetingID = $meetingID;
         $this->attendeePW = $attendeePW;
         $this->moderatorPW = $moderatorPW;
         $this->client = $client;
-        $this->createTime = 0;
-        $this->createDate = '';
-        $this->hasUserJoined = null;
-        $this->duration = 0;
-        $this->hasBeenForciblyEnded = null;
-        $this->meetingName = '';
-        $this->voiceBridge = '';
-        $this->dialNumber = '';
-        $this->running = null;
-        $this->recording = null;
-        $this->startTime = 0;
-        $this->endTime = '';
-        $this->participantCount = 0;
-        $this->maxUsers = 0;
-        $this->moderatorCount = 0;
-        $this->attendees =  [];
-        $this->metadata = [];
-        $this->recordings = [];
-        if (isset($options['createTime'])) {
-            $this->createTime = $options['createTime'];
+
+        foreach ($options as $key => $value) {
+            if(isset($this->{$key})) {
+                $this->{$key} = $value;
+            }
         }
-        if (isset($options['createDate'])) {
-            $this->createDate = $options['createDate'];
-        }
-        if (isset($options['hasUserJoined'])) {
-            $this->hasUserJoined = $options['hasUserJoined'];
-        }
-        if (isset($options['duration'])) {
-            $this->duration = $options['duration'];
-        }
-        if (isset($options['hasBeenForciblyEnded'])) {
-            $this->hasBeenForciblyEnded = $options['hasBeenForciblyEnded'];
-        }
-        if (isset($options['name'])) {
-            $this->meetingName = $options['name'];
-        }
-        if (isset($options['voiceBridge'])) {
-            $this->voiceBridge = $options['voiceBridge'];
-        }
-        if (isset($options['dialNumber'])) {
-            $this->dialNumber = $options['dialNumber'];
-        }
-        if (isset($options['running'])) {
-            $this->running = $options['running'];
-        }
-        if (isset($options['recording'])) {
-            $this->recording = $options['recording'];
-        }
-        if (isset($options['startTime'])) {
-            $this->startTime = $options['startTime'];
-        }
-        if (isset($options['endTime'])) {
-            $this->endTime = $options['endTime'];
-        }
-        if (isset($options['participantCount'])) {
-            $this->participantCount = $options['participantCount'];
-        }
-        if (isset($options['maxUsers'])) {
-            $this->maxUsers = $options['maxUsers'];
-        }
-        if (isset($options['moderatorCount'])) {
-            $this->moderatorCount = $options['moderatorCount'];
-        }
-        if (isset($options['attendees'])) {
-            $this->attendees = $options['attendees'];
-        }
-        if (isset($options['metadata'])) {
-            $this->metadata = (array) $options['metadata'];
-        }
+    }
+
+    /**
+     * Get the Meeting ID.
+     *
+     * @return string
+     */
+    public function getMeetingID()
+    {
+        return $this->meetingID;
+    }
+
+    /**
+     * Get the Attendee Password.
+     *
+     * @return string
+     */
+    public function getAttendeePW()
+    {
+        return $this->attendeePW;
+    }
+
+    /**
+     * Get the Moderator Password.
+     *
+     * @return string
+     */
+    public function getModeratorPW()
+    {
+        return $this->moderatorPW;
+    }
+
+    /**
+     * Get the Creation Time.
+     *
+     * @return int
+     */
+    public function getCreateTime()
+    {
+        return $this->createTime;
+    }
+
+    /**
+     * Get the Creation Date.
+     *
+     * @return string
+     */
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    /**
+     * Check if someone has joined.
+     *
+     * @return boolean
+     */
+    public function hasUserJoined()
+    {
+        return $this->hasUserJoined;
+    }
+
+    /**
+     * Get the Duration.
+     *
+     * @return int
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+
+    /**
+     * Check if the Meeting has been forcibly ended.
+     *
+     * @return boolean
+     */
+    public function hasBeenForciblyEnded()
+    {
+        return $this->hasBeenForciblyEnded;
+    }
+
+    /**
+     * Get the Meeting Name.
+     *
+     * @return string
+     */
+    public function getMeetingName()
+    {
+        return $this->meetingName;
+    }
+
+    /**
+     * Get the Voice Bridge.
+     *
+     * @return string
+     */
+    public function getVoiceBridge()
+    {
+        return $this->voiceBridge;
+    }
+
+    /**
+     * Get the Dial Number.
+     *
+     * @return string
+     */
+    public function getDialNumber()
+    {
+        return $this->dialNumber;
+    }
+
+    /**
+     * Get the Start Time.
+     *
+     * @return int
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Get the End Time.
+     *
+     * @return string
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    /**
+     * Get the Participant Count.
+     *
+     * @return int
+     */
+    public function getParticipantCount()
+    {
+        return $this->participantCount;
+    }
+
+    /**
+     * Get the Max Users.
+     *
+     * @return int
+     */
+    public function getMaxUsers()
+    {
+        return $this->maxUsers;
+    }
+
+    /**
+     * Get the Moderator Count.
+     *
+     * @return int
+     */
+    public function getModeratorCount()
+    {
+        return $this->moderatorCount;
+    }
+
+    /**
+     * Get the Attendees.
+     *
+     * @return int
+     */
+    public function getAttendees()
+    {
+        return $this->attendees;
+    }
+
+    /**
+     * Get the Metadata.
+     *
+     * @return array
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 
     /**
