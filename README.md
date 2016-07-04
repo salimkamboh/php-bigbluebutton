@@ -6,9 +6,12 @@ This is a php library to interface with a BigBlueButton server instance.
 
 ## Supported PHP-FIG Recommendations
 
-  * PSR-1: Basic Coding Standard
-  * PSR-2: Coding Style Guide
-  * PSR-4: Improved Autoloading
+  * PSR-1: Basic Coding Standard  
+    http://www.php-fig.org/psr/psr-1/
+  * PSR-2: Coding Style Guide  
+    http://www.php-fig.org/psr/psr-2/
+  * PSR-4: Improved Autoloading  
+    http://www.php-fig.org/psr/psr-4/
 
 ## Installation
 
