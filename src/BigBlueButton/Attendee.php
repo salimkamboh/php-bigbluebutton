@@ -19,28 +19,28 @@ class Attendee
      *
      * @var string
      */
-    public $userID;
+    protected $userID;
 
     /**
      * The full user name.
      *
      * @var string
      */
-    public $fullName;
+    protected $fullName;
 
     /**
      * The user role.
      *
      * @var string
      */
-    public $role;
+    protected $role;
 
     /**
      * Custom user data.
      *
      * @var array
      */
-    public $customdata;
+    protected $customdata;
 
     /**
      * Attendee constructor.

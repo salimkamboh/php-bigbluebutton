@@ -22,28 +22,28 @@ class Client
      *
      * @var string
      */
-    public $url;
+    protected $url;
 
     /**
      * The server secret.
      *
      * @var string
      */
-    public $secret;
+    protected $secret;
 
     /**
      * The api endpoint.
      *
      * @var string
      */
-    private $endpoint;
+    protected $endpoint;
 
     /**
      * The HTTP client.
      *
      * @var \GuzzleHttp\Client
      */
-    private $HTTPClient;
+    protected $client;
 
     /**
      * Client constructor.
