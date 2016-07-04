@@ -34,14 +34,14 @@ class BigBlueButton
      *
      * @var \sanduhrs\BigBlueButton\Server
      */
-    protected $server;
+    public $server;
 
     /**
      * The BigBlueButton client object.
      *
      * @var \sanduhrs\BigBlueButton\Client
      */
-    protected $client;
+    public $client;
 
 
     /**
@@ -59,25 +59,4 @@ class BigBlueButton
         $this->client = new Client($url, $secret, $endpoint);
         $this->server = new Server($this->client);
     }
-
-    /**
-     * Get Server.
-     *
-     * @return \sanduhrs\BigBlueButton\Server
-     */
-    public function getServer()
-    {
-        return $this->server;
-    }
-
-    /**
-     * Get Cient.
-     *
-     * @return \sanduhrs\BigBlueButton\Client
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
 }
