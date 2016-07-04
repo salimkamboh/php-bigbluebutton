@@ -60,7 +60,37 @@ class Client
         $this->url = $url;
         $this->secret = $secret;
         $this->endpoint = $endpoint;
-        $this->HTTPClient = new HTTPClient();
+        $this->client = new Client();
+    }
+
+    /**
+     * Get URL.
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Get Secret.
+     *
+     * @return string
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
+    /**
+     * Get Endpoint.
+     *
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        return $this->endpoint;
     }
 
     /**
