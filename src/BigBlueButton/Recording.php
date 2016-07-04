@@ -21,63 +21,63 @@ class Recording
      *
      * @var \sanduhrs\BigBlueButton\Client
      */
-    public $client;
+    protected $client;
 
     /**
      * The record id.
      *
      * @var string
      */
-    public $recordID;
+    protected $recordID;
 
     /**
      * The meeting id.
      *
      * @var string
      */
-    public $meetingID;
+    protected $meetingID;
 
     /**
      * The record name.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The published state.
      *
      * @var boolean
      */
-    public $published;
+    protected $published;
 
     /**
      * The start time.
      *
      * @var integer
      */
-    public $startTime;
+    protected $startTime;
 
     /**
      * The end time.
      *
      * @var integer
      */
-    public $endTime;
+    protected $endTime;
 
     /**
      * The metadata.
      *
      * @var array
      */
-    public $metadata;
+    protected $metadata;
 
     /**
      * The playback data.
      *
      * @var array
      */
-    public $playback;
+    protected $playback;
 
     /**
      * Recording constructor.
@@ -90,35 +90,23 @@ class Recording
         $options,
         $client
     ) {
+        $options = [
+            'meetingID' => '',
+            'name' => '',
+            'published' => null,
+            'startTime' => 0,
+            'endTime' => 0,
+            'metadata' => [],
+            'playback' => [],
+        ] + $options;
+
         $this->recordID = $recordID;
         $this->client = $client;
-        $this->meetingID = '';
-        $this->name = '';
-        $this->published = null;
-        $this->startTime = 0;
-        $this->endTime = 0;
-        $this->metadata = [];
-        $this->playback = [];
-        if (isset($options['meetingID'])) {
-            $this->meetingID = $options['meetingID'];
-        }
-        if (isset($options['name'])) {
-            $this->name = $options['name'];
-        }
-        if (isset($options['published'])) {
-            $this->published = $options['published'];
-        }
-        if (isset($options['startTime'])) {
-            $this->startTime = $options['startTime'];
-        }
-        if (isset($options['endTime'])) {
-            $this->endTime = $options['endTime'];
-        }
-        if (isset($options['metadata'])) {
-            $this->metadata = $options['metadata'];
-        }
-        if (isset($options['playback'])) {
-            $this->playback = $options['playback'];
+
+        foreach ($options as $key => $value) {
+            if(isset($this->{$key})) {
+                $this->{$key} = $value;
+            }
         }
     }
 
