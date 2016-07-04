@@ -202,7 +202,7 @@ class Recording
             'recordID' => $this->recordID,
             'publish' => 'true',
         ];
-        return $this->client->get('isMeetingRunning', $options);
+        return $this->client->get('publishRecordings', $options);
     }
 
     /**
