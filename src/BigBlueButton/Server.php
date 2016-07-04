@@ -23,21 +23,21 @@ class Server
      *
      * @var array of \sanduhrs\BigBlueButton\Meeting
      */
-    private $meetings;
+    protected $meetings;
 
     /**
      * The recordings.
      *
      * @var array of \sanduhrs\BigBlueButton\Recording
      */
-    private $recordings;
+    protected $recordings;
 
     /**
      * The client.
      *
      * @var \sanduhrs\BigBlueButton\Client
      */
-    private $client;
+    protected $client;
 
     /**
      * Server constructor.

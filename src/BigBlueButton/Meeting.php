@@ -8,6 +8,7 @@
 namespace sanduhrs\BigBlueButton;
 
 use sanduhrs\BigBlueButton\Attendee;
+use sanduhrs\BigBlueButton\Client;
 use sanduhrs\BigBlueButton\Recording;
 
 /**
@@ -22,7 +23,7 @@ class Meeting
      *
      * @var \sanduhrs\BigBlueButton\Client
      */
-    public $client;
+    protected $client;
 
     /**
      * The meeting ID.
@@ -32,7 +33,7 @@ class Meeting
      *
      * @var string
      */
-    public $meetingID;
+    protected $meetingID;
 
     /**
      * The attendee password.
@@ -41,7 +42,7 @@ class Meeting
      *
      * @var string
      */
-    public $attendeePW;
+    protected $attendeePW;
 
     /**
      * The moderator password.
@@ -51,98 +52,98 @@ class Meeting
      *
      * @var string
      */
-    public $moderatorPW;
+    protected $moderatorPW;
 
     /**
      * @var integer
      */
-    public $createTime;
+    protected $createTime;
 
     /**
      * @var string
      */
-    public $createDate;
+    protected $createDate;
 
     /**
      * @var boolean
      */
-    public $hasUserJoined;
+    protected $hasUserJoined;
 
     /**
      * @var integer
      */
-    public $duration;
+    protected $duration;
 
     /**
      * @var boolean
      */
-    public $hasBeenForciblyEnded;
+    protected $hasBeenForciblyEnded;
 
     /**
      * @var string
      */
-    public $meetingName;
+    protected $meetingName;
 
     /**
      * @var string
      */
-    public $voiceBridge;
+    protected $voiceBridge;
 
     /**
      * @var string
      */
-    public $dialNumber;
+    protected $dialNumber;
 
     /**
      * @var boolean
      */
-    public $running;
+    protected $running;
 
     /**
      * @var boolean
      */
-    public $recording;
+    protected $recording;
 
     /**
      * @var integer
      */
-    public $startTime;
+    protected $startTime;
 
     /**
      * @var string
      */
-    public $endTime;
+    protected $endTime;
 
     /**
      * @var integer
      */
-    public $participantCount;
+    protected $participantCount;
 
     /**
      * @var integer
      */
-    public $maxUsers;
+    protected $maxUsers;
 
     /**
      * @var integer
      */
-    public $moderatorCount;
+    protected $moderatorCount;
 
     /**
      * @var integer
      */
-    public $attendees;
+    protected $attendees;
 
     /**
      * @var array
      */
-    public $metadata;
+    protected $metadata;
 
     /**
      * @var array
      *   An array of \sanduhrs\BigBlueButton\Recording
      */
-    public $recordings;
+    protected $recordings;
 
     /**
      * Meeting constructor.
