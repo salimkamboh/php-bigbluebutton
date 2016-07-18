@@ -21,7 +21,7 @@ The run
 
     composer require sanduhrs/php-bigbluebutton
 
-## Coniguration
+## Configuration
 
 To get your API URL and secret login to your BigBlueButton server and run:
 
