@@ -12,7 +12,7 @@ use sanduhrs\BigBlueButton\Client;
 class Recording
 {
     /**
-     * The record id.
+     * The recording id.
      *
      * @var string
      */
@@ -82,10 +82,11 @@ class Recording
     /**
      * Recording constructor.
      *
-     * @param array $options
+     * @param array $attributes
      */
-    public function __construct($options) {
-        $options += [
+    public function __construct($attributes)
+    {
+        $attributes += [
             'recordID' => '',
             'meetingID' => '',
             'name' => '',
@@ -97,8 +98,8 @@ class Recording
             'playback' => [],
         ];
 
-        foreach ($options as $key => $value) {
-            if(isset($this->{$key})) {
+        foreach ($attributes as $key => $value) {
+            if (property_exists(self::class, $key)) {
                 $this->{$key} = $value;
             }
         }
@@ -145,6 +146,16 @@ class Recording
     }
 
     /**
+     * Get published state.
+     *
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
      * Get Start Time.
      *
      * @return int
@@ -175,6 +186,65 @@ class Recording
     }
 
     /**
+     * Get the title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->metadata['title'];
+    }
+
+    /**
+     * Get the subject.
+     *
+     * @return string
+     */
+    public function getSubject()
+    {
+        return $this->metadata['subject'];
+    }
+
+    /**
+     * Get the description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->metadata['description'];
+    }
+
+    /**
+     * Get the creator.
+     *
+     * @return string
+     */
+    public function getCreator()
+    {
+        return $this->metadata['creator'];
+    }
+
+    /**
+     * Get the contributor.
+     * @return string
+     */
+    public function getContributor()
+    {
+        return $this->metadata['contributor'];
+    }
+
+    /**
+     * Get the language.
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->metadata['language'];
+    }
+
+    /**
      * Get Playback.
      *
      * @return array
@@ -182,6 +252,16 @@ class Recording
     public function getPlayback()
     {
         return $this->playback;
+    }
+
+    /**
+     * Set the client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
     }
 
     /**

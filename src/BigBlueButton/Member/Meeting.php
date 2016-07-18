@@ -1,10 +1,9 @@
 <?php
 
-namespace sanduhrs\BigBlueButton;
+namespace sanduhrs\BigBlueButton\Member;
 
-use sanduhrs\BigBlueButton\Attendee;
 use sanduhrs\BigBlueButton\Client;
-use sanduhrs\BigBlueButton\Recording;
+use sanduhrs\BigBlueButton\Member\Document;
 
 /**
  * Class Meeting
@@ -14,11 +13,11 @@ use sanduhrs\BigBlueButton\Recording;
 class Meeting
 {
     /**
-     * The BigBlueButton client.
+     * The meeting name.
      *
-     * @var \sanduhrs\BigBlueButton\Client
+     * @var string
      */
-    protected $client;
+    protected $meetingName;
 
     /**
      * The meeting ID.
@@ -50,143 +49,310 @@ class Meeting
     protected $moderatorPW;
 
     /**
-     * @var integer
-     */
-    protected $createTime;
-
-    /**
+     * The welcome string.
+     *
      * @var string
      */
-    protected $createDate;
+    protected $welcome;
 
     /**
-     * @var boolean
-     */
-    protected $hasUserJoined;
-
-    /**
-     * @var integer
-     */
-    protected $duration;
-
-    /**
-     * @var boolean
-     */
-    protected $hasBeenForciblyEnded;
-
-    /**
-     * @var string
-     */
-    protected $meetingName;
-
-    /**
-     * @var string
-     */
-    protected $voiceBridge;
-
-    /**
+     * The dial in number.
+     *
      * @var string
      */
     protected $dialNumber;
 
     /**
+     * The voice bridge.
+     *
+     * @var string
+     */
+    protected $voiceBridge;
+
+    /**
+     * The web voice.
+     *
+     * @var string
+     */
+    protected $webVoice;
+
+    /**
+     * The logout URL.
+     *
+     * @var string
+     */
+    protected $logoutURL;
+
+    /**
+     * The meeting will record.
+     *
+     * @var bool
+     */
+    protected $record;
+
+    /**
+     * The duration of the meeting.
+     *
+     * @var int
+     */
+    protected $duration;
+
+    /**
+     * Message for moderator only.
+     *
+     * @var string
+     */
+    protected $moderatorOnlyMessage;
+
+    /**
+     * Meeting automatically starts recording.
+     *
+     * @var bool
+     */
+    protected $autoStartRecording;
+
+    /**
+     * Meeting does allow to start/stop recording.
+     *
+     * @var bool
+     */
+    protected $allowStartStopRecording;
+
+    // Read-only properties
+
+    /**
+     * The create time.
+     *
+     * @var integer
+     */
+    protected $createTime;
+
+    /**
+     * The create date.
+     * @var string
+     */
+    protected $createDate;
+
+    /**
+     * The meeting is running.
+     *
      * @var boolean
      */
     protected $running;
 
     /**
+     * A user has already joined.
+     *
+     * @var boolean
+     */
+    protected $hasUserJoined;
+
+    /**
+     * The meeting is recording.
+     *
      * @var boolean
      */
     protected $recording;
 
     /**
+     * The meeting has been forcibly ended.
+     *
+     * @var boolean
+     */
+    protected $hasBeenForciblyEnded;
+
+    /**
+     * The start time.
+     *
      * @var integer
      */
     protected $startTime;
 
     /**
-     * @var string
+     * The end time.
+     *
+     * @var int
      */
     protected $endTime;
 
     /**
+     * The participant count.
+     *
      * @var integer
      */
     protected $participantCount;
 
     /**
+     * The listener count.
+     *
+     * @var int
+     */
+    protected $listenerCount;
+
+    /**
+     * The voice participant count.
+     *
+     * @var int
+     */
+    protected $voiceParticipantCount;
+
+    /**
+     * The video count.
+     *
+     * @var int
+     */
+    protected $videoCount;
+
+    /**
+     * The maximum of users.
+     *
      * @var integer
      */
     protected $maxUsers;
 
     /**
+     * The number of moderators.
+     *
      * @var integer
      */
     protected $moderatorCount;
 
     /**
-     * @var integer
+     * The attendees.
+     *
+     * @var array
      */
     protected $attendees;
 
     /**
+     * Additional meta data.
+     *
      * @var array
      */
     protected $metadata;
 
     /**
+     * The recordings.
+     *
      * @var array
-     *   An array of \sanduhrs\BigBlueButton\Recording
      */
     protected $recordings;
 
     /**
+     * The slides.
+     *
+     * @var array
+     */
+    protected $slides;
+
+    /**
+     * The BigBlueButton client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
+     */
+    protected $client;
+
+    /**
      * Meeting constructor.
      *
-     * @param string $meetingID
-     * @param string $attendeePW
-     * @param string $moderatorPW
-     * @param array $options
+     * @param array $attributes
+     *   - id (string): The unique id for the meeting.
+     *   - name (string): A name for the meeting.
+     *   - welcome (string): A welcome message that gets displayed on the chat
+     *     window when the participant joins. You can include keywords
+     *     (%%CONFNAME%%, %%DIALNUM%%, %%CONFNUM%%) which will be substituted
+     *     automatically. You can set a default welcome message on
+     *     bigbluebutton.properties
+     *   - dialNumber (string): The dial access number that participants can
+     *     call in using regular phone. You can set a default dial number on
+     *     bigbluebutton.properties
+     *   - voiceBridge (string): Voice conference number that participants enter
+     *     to join the voice conference. The default pattern for this is a
+     *     5-digit number. This is the PIN that a dial-in user must enter to
+     *     join the conference. If you want to change this pattern, you have to
+     *     edit FreeSWITCH dialplan and defaultNumDigitsForTelVoice of
+     *     bigbluebutton.properties. When using the default setup, we recommend
+     *     you always pass a 5-digit voiceBridge parameter. Finally, if you
+     *     don’t pass a value for voiceBridge, then users will not be able to
+     *     join a voice conference for the session.
+     *   - webVoice (string): Voice conference alphanumeric that participants
+     *     enter to join the voice conference.
+     *   - logoutURL (string): The URL that the BigBlueButton client will go to
+     *     after users click the OK button on the ‘You have been logged out
+     *     message’. This overrides, the value for
+     *     bigbluebutton.web.loggedOutURL if defined in bigbluebutton.properties
+     *   - record (boolean): Setting ‘record=true’ instructs the BigBlueButton
+     *     server to record the media and events in the session for later
+     *     playback. Available values are true or false. Default value is false.
+     *   - duration (number): The maximum length (in minutes) for the meeting.
+     *     Normally, the BigBlueButton server will end the meeting when either
+     *     the last person leaves (it takes a minute or two for the server to
+     *     clear the meeting from memory) or when the server receives an end API
+     *     request with the associated meetingID (everyone is kicked and the
+     *     meeting is immediately cleared from memory). BigBlueButton begins
+     *     tracking the length of a meeting when the first person joins. If
+     *     duration contains a non-zero value, then when the length of the
+     *     meeting exceeds the duration value the server will immediately end
+     *     the meeting (same as receiving an end API request).
+     *   - meta (string): You can pass one or more metadata values for create a
+     *     meeting. These will be stored by BigBlueButton and later retrievable
+     *     via the getMeetingInfo call and getRecordings. Examples of meta
+     *     parameters are meta_Presenter, meta_category, meta_LABEL, etc. All
+     *     parameters are converted to lower case, so meta_Presenter would be
+     *     the same as meta_PRESENTER.
+     *   - moderatorOnlyMessage (string): Display a message to all moderators in
+     *     the public chat.
+     *   - autoStartRecording (boolean): Automatically starts recording when
+     *     first user joins. NOTE: Don’t set to autoStartRecording =false and
+     *     allowStartStopRecording=false as the user won’t be able to record.
+     *   - allowStartStopRecording (boolean): Allow the user to start/stop
+     *     recording. This means the meeting can start recording automatically
+     *     (autoStartRecording=true) with the user able to stop/start recording
+     *     from the client.
+     *
      * @param \sanduhrs\BigBlueButton\Client $client
      */
-    public function __construct(
-      $meetingID,
-      $attendeePW,
-      $moderatorPW,
-      $options,
-      Client $client
-    ) {
-        $options = [
-            'createTime' => 0,
-            'createDate' => '',
-            'hasUserJoined' => null,
-            'duration' => 0,
-            'hasBeenForciblyEnded' => null,
-            'meetingName' => '',
-            'voiceBridge' => '',
+    public function __construct($attributes, Client $client)
+    {
+        $attributes += [
+            'id' => '',
+            'name' => '',
+            'attendeePW' => '',
+            'moderatorPW' => '',
+            'welcome' => '',
             'dialNumber' => '',
-            'running' => null,
-            'recording' => null,
-            'startTime' => 0,
-            'endTime' => '',
-            'participantCount' => 0,
-            'maxUsers' => 0,
-            'moderatorCount' => 0,
-            'attendees' => [],
-            'metadata' => [],
-            'recordings' => [],
-          ] + $options;
+            'voiceBridge' => '',
+            'webVoice' => '',
+            'logoutURL' => '',
+            'record' => false,
+            'duration' => 0,
+            'meta' => [],
+            'moderatorOnlyMessage' => '',
+            'autoStartRecording' => false,
+            'allowStartStopRecording' => true,
+        ];
 
-        $this->meetingID = $meetingID;
-        $this->attendeePW = $attendeePW;
-        $this->moderatorPW = $moderatorPW;
-        $this->client = $client;
+        // Take naming inconsistencies into account.
+        if (!empty($attributes['name'])) {
+            $attributes['meetingName'] = $attributes['name'];
+            unset($attributes['name']);
+        }
+        if (!empty($attributes['id'])) {
+            $attributes['meetingID'] = $attributes['id'];
+            unset($attributes['id']);
+        }
+        if (!empty($attributes['meta'])) {
+            $attributes['metadata'] = $attributes['meta'];
+            unset($attributes['meta']);
+        }
 
-        foreach ($options as $key => $value) {
-            if(isset($this->{$key})) {
+        foreach ($attributes as $key => $value) {
+            if (property_exists(self::class, $key)) {
                 $this->{$key} = $value;
             }
         }
+
+        $this->client = $client;
     }
 
     /**
@@ -194,92 +360,46 @@ class Meeting
      *
      * @return string
      */
-    public function id() {
-        $this->getMeetingID();
+    public function getId()
+    {
+        return $this->getMeetingID();
     }
 
     /**
-     * Get the Meeting ID.
+     * Alias for setMeetingID().
+     *
+     * @param string $meetingID
+     * @return Meeting
+     */
+    public function setId($meetingID)
+    {
+        return $this->setMeetingID($meetingID);
+    }
+
+    /**
+     * Alias for getMeetingName().
      *
      * @return string
      */
-    public function getMeetingID()
+    public function getName()
     {
-        return $this->meetingID;
+        return $this->meetingName;
     }
 
     /**
-     * Get the Attendee Password.
+     * Alias for setMeetingName().
      *
-     * @return string
+     * @param string $name
+     * @return Meeting
      */
-    public function getAttendeePW()
+    public function setName($name)
     {
-        return $this->attendeePW;
+        $this->meetingName = $name;
+        return $this;
     }
 
     /**
-     * Get the Moderator Password.
-     *
-     * @return string
-     */
-    public function getModeratorPW()
-    {
-        return $this->moderatorPW;
-    }
-
-    /**
-     * Get the Creation Time.
-     *
-     * @return int
-     */
-    public function getCreateTime()
-    {
-        return $this->createTime;
-    }
-
-    /**
-     * Get the Creation Date.
-     *
-     * @return string
-     */
-    public function getCreateDate()
-    {
-        return $this->createDate;
-    }
-
-    /**
-     * Check if someone has joined.
-     *
-     * @return boolean
-     */
-    public function hasUserJoined()
-    {
-        return $this->hasUserJoined;
-    }
-
-    /**
-     * Get the Duration.
-     *
-     * @return int
-     */
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    /**
-     * Check if the Meeting has been forcibly ended.
-     *
-     * @return boolean
-     */
-    public function hasBeenForciblyEnded()
-    {
-        return $this->hasBeenForciblyEnded;
-    }
-
-    /**
-     * Get the Meeting Name.
+     * Get the meeting name.
      *
      * @return string
      */
@@ -289,17 +409,107 @@ class Meeting
     }
 
     /**
-     * Get the Voice Bridge.
+     * Set the meeting name.
      *
-     * @return string
+     * @param string $name
+     * @return Meeting
      */
-    public function getVoiceBridge()
+    public function setMeetingName($name)
     {
-        return $this->voiceBridge;
+        $this->meetingName = $name;
+        return $this;
     }
 
     /**
-     * Get the Dial Number.
+     * Get the meeting id.
+     *
+     * @return string
+     */
+    public function getMeetingId()
+    {
+        return $this->meetingID;
+    }
+
+    /**
+     * Set the meeting id.
+     *
+     * @param string $meetingID
+     * @return Meeting
+     */
+    public function setMeetingId($meetingID)
+    {
+        $this->meetingID = $meetingID;
+        return $this;
+    }
+
+    /**
+     * Get the attendee password.
+     *
+     * @return string
+     */
+    public function getAttendeePw()
+    {
+        return $this->attendeePW;
+    }
+
+    /**
+     * Set the attendee password.
+     *
+     * @param string $attendeePW
+     * @return Meeting
+     */
+    public function setAttendeePw($attendeePW)
+    {
+        $this->attendeePW = $attendeePW;
+        return $this;
+    }
+
+    /**
+     * Get the moderator password.
+     *
+     * @return string
+     */
+    public function getModeratorPw()
+    {
+        return $this->moderatorPW;
+    }
+
+    /**
+     * Set the moderator password.
+     *
+     * @param string $moderatorPW
+     * @return Meeting
+     */
+    public function setModeratorPw($moderatorPW)
+    {
+        $this->moderatorPW = $moderatorPW;
+        return $this;
+    }
+
+    /**
+     * Get the welcome message.
+     *
+     * @return string
+     */
+    public function getWelcome()
+    {
+        return $this->welcome;
+    }
+
+    /**
+     * Set the welcome message.
+     *
+     * @param string $welcome
+     * @return Meeting
+     */
+    public function setWelcome($welcome)
+    {
+        $this->welcome = $welcome;
+        return $this;
+    }
+
+    /**
+     * Get the dial in number.
      *
      * @return string
      */
@@ -309,7 +519,308 @@ class Meeting
     }
 
     /**
-     * Get the Start Time.
+     * Set the dial in number.
+     *
+     * @param string $dialNumber
+     * @return Meeting
+     */
+    public function setDialNumber($dialNumber)
+    {
+        $this->dialNumber = $dialNumber;
+        return $this;
+    }
+
+    /**
+     * Get the voice bridge.
+     *
+     * @return string
+     */
+    public function getVoiceBridge()
+    {
+        return $this->voiceBridge;
+    }
+
+    /**
+     * Set the voice bridge.
+     *
+     * @param string $voiceBridge
+     * @return Meeting
+     */
+    public function setVoiceBridge($voiceBridge)
+    {
+        $this->voiceBridge = $voiceBridge;
+        return $this;
+    }
+
+    /**
+     * Get the web voice.
+     *
+     * @return string
+     */
+    public function getWebVoice()
+    {
+        return $this->webVoice;
+    }
+
+    /**
+     * Set the web voice.
+     *
+     * @param string $webVoice
+     * @return Meeting
+     */
+    public function setWebVoice($webVoice)
+    {
+        $this->webVoice = $webVoice;
+        return $this;
+    }
+
+    /**
+     * Get the logout URL.
+     *
+     * @return string
+     */
+    public function getLogoutURL()
+    {
+        return $this->logoutURL;
+    }
+
+    /**
+     * Set the logout URL.
+     *
+     * @param string $logoutURL
+     * @return Meeting
+     */
+    public function setLogoutURL($logoutURL)
+    {
+        $this->logoutURL = $logoutURL;
+        return $this;
+    }
+
+    /**
+     * Does the meeting record?
+     *
+     * @return boolean
+     */
+    public function getRecord()
+    {
+        return $this->doesRecord();
+    }
+
+    /**
+     * Alias for getRecord().
+     *
+     * @return boolean
+     */
+    public function doesRecord()
+    {
+        return $this->record;
+    }
+
+    /**
+     * Set the record.
+     *
+     * @param boolean $record
+     * @return Meeting
+     */
+    public function setRecord($record)
+    {
+        $this->record = $record;
+        return $this;
+    }
+
+    /**
+     * Get the duration.
+     *
+     * @return int
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+
+    /**
+     * Set the duration.
+     *
+     * @param int $duration
+     * @return Meeting
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
+        return $this;
+    }
+
+    /**
+     * Alias for getMetadata().
+     *
+     * @return array
+     */
+    public function getMeta()
+    {
+        return $this->getMetadata();
+    }
+
+    /**
+     * Alias for setMetadata().
+     *
+     * @param array $metadata
+     * @return Meeting
+     */
+    public function setMeta($metadata)
+    {
+        return $this->setMetadata($metadata);
+    }
+
+    /**
+     * Set metadata.
+     *
+     * @param array $metadata
+     * @return Meeting
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    /**
+     * Get the moderator message.
+     *
+     * @return string
+     */
+    public function getModeratorOnlyMessage()
+    {
+        return $this->moderatorOnlyMessage;
+    }
+
+    /**
+     * Set the moderator message.
+     *
+     * @param string $moderatorOnlyMessage
+     * @return Meeting
+     */
+    public function setModeratorOnlyMessage($moderatorOnlyMessage)
+    {
+        $this->moderatorOnlyMessage = $moderatorOnlyMessage;
+        return $this;
+    }
+
+    /**
+     * Alias for getAutoStartRecording().
+     *
+     * @return boolean
+     */
+    public function doesAutoStartRecording()
+    {
+        return $this->getAutoStartRecording();
+    }
+
+    /**
+     * Is the recording auto starting?
+     *
+     * @return boolean
+     */
+    public function getAutoStartRecording()
+    {
+        return $this->autoStartRecording;
+    }
+
+    /**
+     * Set the auto start recording indicator.
+     *
+     * @param boolean $autoStartRecording
+     * @return Meeting
+     */
+    public function setAutoStartRecording($autoStartRecording)
+    {
+        $this->autoStartRecording = $autoStartRecording;
+        return $this;
+    }
+
+    /**
+     * Alias for getAllowStartStopRecording().
+     *
+     * @return boolean
+     */
+    public function doesAllowStartStopRecording()
+    {
+        return $this->getAllowStartStopRecording();
+    }
+
+    /**
+     * Does the meeting allow to start/stop recording?
+     *
+     * @return boolean
+     */
+    public function getAllowStartStopRecording()
+    {
+        return $this->allowStartStopRecording;
+    }
+
+    /**
+     * Set the allow start/stop recording indicator.
+     *
+     * @param boolean $allowStartStopRecording
+     * @return Meeting
+     */
+    public function setAllowStartStopRecording($allowStartStopRecording)
+    {
+        $this->allowStartStopRecording = $allowStartStopRecording;
+        return $this;
+    }
+
+    /**
+     * Get the create time.
+     *
+     * @return int
+     */
+    public function getCreateTime()
+    {
+        return $this->createTime;
+    }
+
+    /**
+     * Get the create date.
+     *
+     * @return string
+     */
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    /**
+     * Has a user already joined?
+     *
+     * @return boolean
+     */
+    public function hasUserJoined()
+    {
+        return $this->hasUserJoined;
+    }
+
+    /**
+     * Alias for getHasBeenForciblyEnded().
+     *
+     * @return boolean
+     */
+    public function hasBeenForciblyEnded()
+    {
+        return getHasBeenForciblyEnded();
+    }
+
+    /**
+     * Has the meeting been forcibly ended?
+     *
+     * @return boolean
+     */
+    public function getHasBeenForciblyEnded()
+    {
+        return $this->hasBeenForciblyEnded;
+    }
+
+    /**
+     * Get the start time.
      *
      * @return int
      */
@@ -319,9 +830,9 @@ class Meeting
     }
 
     /**
-     * Get the End Time.
+     * Get the end time.
      *
-     * @return string
+     * @return int
      */
     public function getEndTime()
     {
@@ -329,7 +840,7 @@ class Meeting
     }
 
     /**
-     * Get the Participant Count.
+     * Get the participant count.
      *
      * @return int
      */
@@ -339,7 +850,37 @@ class Meeting
     }
 
     /**
-     * Get the Max Users.
+     * Get the listener count.
+     *
+     * @return int
+     */
+    public function getListenerCount()
+    {
+        return $this->listenerCount;
+    }
+
+    /**
+     * Get the voice participant count.
+     *
+     * @return int
+     */
+    public function getVoiceParticipantCount()
+    {
+        return $this->voiceParticipantCount;
+    }
+
+    /**
+     * Get the video count.
+     *
+     * @return int
+     */
+    public function getVideoCount()
+    {
+        return $this->videoCount;
+    }
+
+    /**
+     * Get the max users.
      *
      * @return int
      */
@@ -349,7 +890,7 @@ class Meeting
     }
 
     /**
-     * Get the Moderator Count.
+     * Get the moderator count.
      *
      * @return int
      */
@@ -359,9 +900,9 @@ class Meeting
     }
 
     /**
-     * Get the Attendees.
+     * Get the attendees.
      *
-     * @return int
+     * @return array
      */
     public function getAttendees()
     {
@@ -369,7 +910,7 @@ class Meeting
     }
 
     /**
-     * Get the Metadata.
+     * Get the meta data.
      *
      * @return array
      */
@@ -379,148 +920,71 @@ class Meeting
     }
 
     /**
-     * @param string $meetingID
+     * Get the slides.
+     *
+     * @return array
      */
-    public function setMeetingID($meetingID)
+    public function getSlides()
     {
-        $this->meetingID = $meetingID;
+        return $this->slides;
     }
 
     /**
-     * @param string $attendeePW
+     * Add a document with slides.
+     *
+     * @param \sanduhrs\BigBlueButton\Member\Document $document
      */
-    public function setAttendeePW($attendeePW)
+    public function addSlides(Document $document)
     {
-        $this->attendeePW = $attendeePW;
+        $this->slides[] = $document;
     }
 
     /**
-     * @param string $moderatorPW
+     * Set the client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
      */
-    public function setModeratorPW($moderatorPW)
+    public function setClient(Client $client)
     {
-        $this->moderatorPW = $moderatorPW;
-    }
-
-    /**
-     * @param string $meetingName
-     */
-    public function setMeetingName($meetingName)
-    {
-        $this->meetingName = $meetingName;
-    }
-
-    /**
-     * @param string $voiceBridge
-     */
-    public function setVoiceBridge($voiceBridge)
-    {
-        $this->voiceBridge = $voiceBridge;
-    }
-
-    /**
-     * @param string $dialNumber
-     */
-    public function setDialNumber($dialNumber)
-    {
-        $this->dialNumber = $dialNumber;
-    }
-
-    /**
-     * @param array $metadata
-     */
-    public function setMetadata($metadata)
-    {
-        $this->metadata = $metadata;
+        $this->client = $client;
     }
 
     /**
      * Create meeting.
      *
      * Creates a BigBlueButton meeting.
-     * The create call is idempotent: you can call it multiple times with the same
-     * parameters without side effects. This simplifies the logic for joining a
-     * user into a session, your application can always call create before
-     * returning the join URL. This way, regardless of the order in which users
-     * join, the meeting will always exist but won’t be empty. The BigBlueButton
-     * server will automatically remove empty meetings that were created but have
-     * never had any users after a number of minutes specified by
-     * defaultMeetingCreateJoinDurationdefined in bigbluebutton.properties.
+     * The create call is idempotent: you can call it multiple times with the
+     * same parameters without side effects. This simplifies the logic for
+     * joining a user into a session, your application can always call create
+     * before returning the join URL. This way, regardless of the order in which
+     * users join, the meeting will always exist but won’t be empty. The
+     * BigBlueButton server will automatically remove empty meetings that were
+     * created but have never had any users after a number of minutes specified
+     * by defaultMeetingCreateJoinDuration defined in bigbluebutton.properties.
      *
-     * @param array $options
-     *   - name (string): A name for the meeting.
-     *   - welcome (string): A welcome message that gets displayed on the chat
-     *     window when the participant joins. You can include keywords
-     *     (%%CONFNAME%%, %%DIALNUM%%, %%CONFNUM%%) which will be substituted
-     *     automatically. You can set a default welcome message on
-     *     bigbluebutton.properties
-     *   - dialNumber (string): The dial access number that participants can call
-     *     in using regular phone. You can set a default dial number on
-     *     bigbluebutton.properties
-     *   - voiceBridge (string): Voice conference number that participants enter
-     *     to join the voice conference. The default pattern for this is a 5-digit
-     *     number. This is the PIN that a dial-in user must enter to join the
-     *     conference. If you want to change this pattern, you have to edit
-     *     FreeSWITCH dialplan and defaultNumDigitsForTelVoice of
-     *     bigbluebutton.properties. When using the default setup, we recommend
-     *     you always pass a 5-digit voiceBridge parameter. Finally, if you don’t
-     *     pass a value for voiceBridge, then users will not be able to join a
-     *     voice conference for the session.
-     *   - webVoice (string): Voice conference alphanumberic that participants
-     *     enter to join the voice conference.
-     *   - logoutURL (string): The URL that the BigBlueButton client will go to
-     *     after users click the OK button on the ‘You have been logged out
-     *     message’. This overrides, the value for bigbluebutton.web.loggedOutURL
-     *     if defined in bigbluebutton.properties
-     *   - record (boolean): Setting ‘record=true’ instructs the BigBlueButton
-     *     server to record the media and events in the session for later
-     *     playback. Available values are true or false. Default value is false.
-     *   - duration (number): The maximum length (in minutes) for the meeting.
-     *     Normally, the BigBlueButton server will end the meeting when either the
-     *     last person leaves (it takes a minute or two for the server to clear
-     *     the meeting from memory) or when the server receives an end API request
-     *     with the associated meetingID (everyone is kicked and the meeting is
-     *     immediately cleared from memory). BigBlueButton begins tracking the
-     *     length of a meeting when the first person joins. If duration contains a
-     *     non-zero value, then when the length of the meeting exceeds the
-     *     duration value the server will immediately end the meeting (same as
-     *     receiving an end API request).
-     *   - meta (string): You can pass one or more metadata values for create a
-     *     meeting. These will be stored by BigBlueButton and later retrievable
-     *     via the getMeetingInfo call and getRecordings. Examples of meta
-     *     parameters are meta_Presenter, meta_category, meta_LABEL, etc. All
-     *     parameters are converted to lower case, so meta_Presenter would be the
-     *     same as meta_PRESENTER.
-     *   - moderatorOnlyMessage (string): Display a message to all moderators in
-     *     the public chat.
-     *   - autoStartRecording (boolean): Automatically starts recording when first
-     *     user joins. NOTE: Don’t set to autoStartRecording =false and
-     *     allowStartStopRecording=false as the user won’t be able to record.
-     *   - allowStartStopRecording (boolean): Allow the user to start/stop
-     *     recording. This means the meeting can start recording automatically
-     *     (autoStartRecording=true) with the user able to stop/start recording
-     *     from the client.
-     *
-     * @return string
-     *   The xml formatted server response string.
+     * @return \sanduhrs\BigBlueButton\Member\Meeting
+     *   The meeting object.
      *
      * @todo http://docs.bigbluebutton.org/dev/api.html#preupload-slides
      */
-    public function create($options = [])
+    public function create()
     {
-        $options += [
-            'meetingID' => $this->meetingID,
-            'attendeePW' => $this->attendeePW,
-            'moderatorPW' => $this->moderatorPW,
-        ];
-        $response = $this->client->get('create', $options);
-        return new Meeting(
-            $response->meetingID,
-            $response->attendeePW,
-            $response->moderatorPW,
-            (array) $response,
-            $this->client
-        );
+        $response = $this->client->get('create', [
+          'name' => $this->getName(),
+          'meetingID' => $this->getMeetingID(),
+          'attendeePW' => $this->getAttendeePW(),
+          'moderatorPW' => $this->getModeratorPW(),
+          'welcome' => $this->getWelcome(),
+          'dialNumber' => $this->getDialNumber(),
+          'logoutURL' => $this->getLogoutURL(),
+          'record' => $this->getRecord(),
+          'duration' => $this->getDuration(),
+          'moderatorOnlyMessage' => $this->getModeratorOnlyMessage(),
+          'autoStartRecording' => $this->getAutoStartRecording(),
+          'allowStartStopRecording' => $this->getAllowStartStopRecording(),
+        ]);
+        $this->meetingID = $response->meetingID;
+        return $this->getInfo();
     }
 
     /**
@@ -531,39 +995,41 @@ class Meeting
      * @param string $fullName
      *   The full name that is to be used to identify this user to other
      *   conference attendees.
+     * @param bool $moderator
+     *   The role of the user is moderator.
      * @param array $options
      *   - createTime (string): Third-party apps using the API can now pass
      *     createTime parameter (which was created in the create call),
-     *     BigBlueButton will ensure it matches the ‘createTime’ for the session.
-     *     If they differ, BigBlueButton will not proceed with the join request.
-     *     This prevents a user from reusing their join URL for a subsequent
-     *     session with the same meetingID.
+     *     BigBlueButton will ensure it matches the ‘createTime’ for the
+     *     session. If they differ, BigBlueButton will not proceed with the join
+     *     request. This prevents a user from reusing their join URL for a
+     *     subsequent session with the same meetingID.
      *   - userID (string): An identifier for this user that will help your
      *     application to identify which person this is. This user ID will be
      *     returned for this user in the getMeetingInfo API call so that you can
      *     check.
-     *   - webVoiceConf (string): If you want to pass in a custom voice-extension
-     *     when a user joins the voice conference using voip. This is useful if
-     *     you want to collect more info in you Call Detail Records about the user
-     *     joining the conference. You need to modify your
-     *     /etc/asterisk/bbb-extensions.conf to handle this new extensions.
+     *   - webVoiceConf (string): If you want to pass in a custom
+     *     voice-extension when a user joins the voice conference using voip.
+     *     This is useful if you want to collect more info in you Call Detail
+     *     Records about the user joining the conference. You need to modify
+     *     your /etc/asterisk/bbb-extensions.conf to handle this new extensions.
      *   - configToken (string): The token returned by a setConfigXML API call.
-     *     This causes the BigBlueButton client to load the config.xml associated
-     *     with the token (not the default config.xml)
-     *   - avatarURL (string): The link for the user’s avatar to be displayed when
-     *     displayAvatar in config.xml is set to true.
-     *   - redirect (string): The default behaviour of the JOIN API is to redirect
-     *     the browser to the Flash client when the JOIN call succeeds. There have
-     *     been requests if it’s possible to embed the Flash client in a
-     *     “container” page and that the client starts as a hidden DIV tag which
-     *     becomes visible on the successful JOIN. Setting this variable to FALSE
-     *     will not redirect the browser but returns an XML instead whether the
-     *     JOIN call has succeeded or not. The third party app is responsible for
-     *     displaying the client to the user.
+     *     This causes the BigBlueButton client to load the config.xml
+     *     associated with the token (not the default config.xml)
+     *   - avatarURL (string): The link for the user’s avatar to be displayed
+     *     when displayAvatar in config.xml is set to true.
+     *   - redirect (string): The default behaviour of the JOIN API is to
+     *     redirect the browser to the Flash client when the JOIN call succeeds.
+     *     There have been requests if it’s possible to embed the Flash client
+     *     in a “container” page and that the client starts as a hidden DIV tag
+     *     which becomes visible on the successful JOIN. Setting this variable
+     *     to FALSE will not redirect the browser but returns an XML instead
+     *     whether the JOIN call has succeeded or not. The third party app is
+     *     responsible for displaying the client to the user.
      *   - clientURL (string): Some third party apps what to display their own
-     *     custom client. These apps can pass the URL containing the custom client
-     *     and when redirect is not set to false, the browser will get redirected
-     *     to the value of clientURL.
+     *     custom client. These apps can pass the URL containing the custom
+     *     client and when redirect is not set to false, the browser will get
+     *     redirected to the value of clientURL.
      *
      * @return string
      *   The meeting join URL to redirect to.
@@ -580,6 +1046,17 @@ class Meeting
     }
 
     /**
+     * Alias for getRunning().
+     *
+     * @return boolean
+     *   The running status of the meeting TRUE for running.
+     */
+    public function isRunning()
+    {
+        return $this->getRunning();
+    }
+
+    /**
      * Check meeting status.
      *
      * This call enables you to simply check on whether or not a meeting is
@@ -588,13 +1065,13 @@ class Meeting
      * @return boolean
      *   The running status of the meeting TRUE for running.
      */
-    public function isRunning()
+    public function getRunning()
     {
         $options = [
-            'meetingID' => $this->meetingID,
+          'meetingID' => $this->meetingID,
         ];
         $response = $this->client->get('isMeetingRunning', $options);
-        return $response->running === 'true';
+        return (boolean) $response->running === 'true';
     }
 
     /**
@@ -619,21 +1096,21 @@ class Meeting
     /**
      * Get Meeting Info
      *
-     * This call will return all of a meeting’s information, including the list of
-     * attendees as well as start and end times.
+     * This call will return all of a meeting’s information, including the list
+     * of attendees as well as start and end times.
      *
-     * @return \sanduhrs\BigBlueButton\Meeting
+     * @return \sanduhrs\BigBlueButton\Member\Meeting
      *   The meeting object.
      */
-    public function getInfo()
+    private function getInfo()
     {
         $options = [
             'meetingID' => $this->meetingID,
             'password' => $this->moderatorPW,
         ];
-        $info = $this->client->get('getMeetingInfo', $options);
-        foreach ($info as $key => $value) {
-            if (isset($this->{$key})) {
+        $response = $this->client->get('getMeetingInfo', $options);
+        foreach ($response as $key => $value) {
+            if (property_exists(self::class, $key)) {
                 if ($key === 'attendees') {
                     foreach ($value as $attendee) {
                         $this->{$key}[$attendee->userID] = new Attendee(
@@ -643,6 +1120,12 @@ class Meeting
                             isset($attendee->customData) ? (array) $attendee->customData : []
                         );
                     }
+                } elseif ($key === 'recordings') {
+                    $this->recordings = (array) $value;
+                } elseif ($key === 'metadata') {
+                    $this->metadata = (array) $value;
+                } elseif (is_array($this->{$key})) {
+                    $this->{$key} = (array) $value;
                 } else {
                     $this->{$key} = $value;
                 }
@@ -659,7 +1142,7 @@ class Meeting
      * @param string $recordingID
      *   The recording ID.
      *
-     * @return \sanduhrs\BigBlueButton\Recording|FALSE
+     * @return \sanduhrs\BigBlueButton\Member\Recording|FALSE
      *   An recording object or FALSE.
      */
     public function getRecording($recordingID)
@@ -780,10 +1263,11 @@ class Meeting
      * Set config xml.
      *
      * Associate a custom config.xml file with the current session. This call
-     * returns a token that can later be passed as a parameter to a join URL. When
-     * passed as a parameter, the BigBlueButton client will use the associated
-     * config.xml for the user instead of using the default config.xml. This
-     * enables 3rd party applications to provide user-specific config.xml files.
+     * returns a token that can later be passed as a parameter to a join URL.
+     * When passed as a parameter, the BigBlueButton client will use the
+     * associated config.xml for the user instead of using the default
+     * config.xml. This enables 3rd party applications to provide user-specific
+     * config.xml files.
      *
      * @return string
      *   The xml formatted server response string.

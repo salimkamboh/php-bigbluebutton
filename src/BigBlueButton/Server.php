@@ -2,9 +2,9 @@
 
 namespace sanduhrs\BigBlueButton;
 
-use sanduhrs\BigBlueButton\BigBlueButtonException;
-use sanduhrs\BigBlueButton\Meeting;
-use sanduhrs\BigBlueButton\Recording;
+use sanduhrs\BigBlueButton\Exception\BigBlueButtonException;
+use sanduhrs\BigBlueButton\Member\Meeting;
+use sanduhrs\BigBlueButton\Member\Recording;
 
 /**
  * Class Server
@@ -13,6 +13,13 @@ use sanduhrs\BigBlueButton\Recording;
  */
 class Server
 {
+    /**
+     * The server version.
+     *
+     * @var string
+     */
+    protected $version;
+
     /**
      * The meetings.
      *
@@ -37,10 +44,10 @@ class Server
     /**
      * Server constructor.
      *
-     * @param client $client
+     * @param \sanduhrs\BigBlueButton\Client $client
      */
     public function __construct(
-        $client
+        Client $client
     ) {
         $this->client = $client;
         $this->meetings = [];
@@ -58,99 +65,87 @@ class Server
     public function getVersion()
     {
         $xml = $this->client->get('');
-        return (string) $xml->version;
+        $this->version = (string) $xml->version;
+        return $this->version;
     }
 
     /**
      * Add meeting.
      *
      * Creates a BigBlueButton meeting.
-     * The create call is idempotent: you can call it multiple times with the same
-     * parameters without side effects. This simplifies the logic for joining a
-     * user into a session, your application can always call create before
-     * returning the join URL. This way, regardless of the order in which users
-     * join, the meeting will always exist but won’t be empty. The BigBlueButton
-     * server will automatically remove empty meetings that were created but have
-     * never had any users after a number of minutes specified by
-     * defaultMeetingCreateJoinDurationdefined in bigbluebutton.properties.
-     *
-     * @param string $meetingID
-     *   The meeting ID.
-     *
-     * @param string $attendeePW
-     *   The attendee password.
-     *
-     * @param string $moderatorPW
-     *   The moderator password.
+     * The create call is idempotent: you can call it multiple times with the
+     * same parameters without side effects. This simplifies the logic for
+     * joining a user into a session, your application can always call create
+     * before returning the join URL. This way, regardless of the order in which
+     * users join, the meeting will always exist but won’t be empty. The
+     * BigBlueButton server will automatically remove empty meetings that were
+     * created but have never had any users after a number of minutes specified
+     * by defaultMeetingCreateJoinDuration defined in bigbluebutton.properties.
      *
      * @param array $options
+     *   - meetingID (string): The meeting ID.
+     *   - attendeePW (string): The attendee password.
+     *   - moderatorPW (string): The moderator password.
      *   - name (string): A name for the meeting.
      *   - welcome (string): A welcome message that gets displayed on the chat
      *     window when the participant joins. You can include keywords
      *     (%%CONFNAME%%, %%DIALNUM%%, %%CONFNUM%%) which will be substituted
      *     automatically. You can set a default welcome message on
      *     bigbluebutton.properties
-     *   - dialNumber (string): The dial access number that participants can call
-     *     in using regular phone. You can set a default dial number on
+     *   - dialNumber (string): The dial access number that participants can
+     *     call in using regular phone. You can set a default dial number on
      *     bigbluebutton.properties
      *   - voiceBridge (string): Voice conference number that participants enter
-     *     to join the voice conference. The default pattern for this is a 5-digit
-     *     number. This is the PIN that a dial-in user must enter to join the
-     *     conference. If you want to change this pattern, you have to edit
-     *     FreeSWITCH dialplan and defaultNumDigitsForTelVoice of
+     *     to join the voice conference. The default pattern for this is a
+     *     5-digit number. This is the PIN that a dial-in user must enter to
+     *     join the conference. If you want to change this pattern, you have to
+     *     edit FreeSWITCH dialplan and defaultNumDigitsForTelVoice of
      *     bigbluebutton.properties. When using the default setup, we recommend
-     *     you always pass a 5-digit voiceBridge parameter. Finally, if you don’t
-     *     pass a value for voiceBridge, then users will not be able to join a
-     *     voice conference for the session.
-     *   - webVoice (string): Voice conference alphanumberic that participants
+     *     you always pass a 5-digit voiceBridge parameter. Finally, if you
+     *     don’t pass a value for voiceBridge, then users will not be able to
+     *     join a voice conference for the session.
+     *   - webVoice (string): Voice conference alphanumeric that participants
      *     enter to join the voice conference.
      *   - logoutURL (string): The URL that the BigBlueButton client will go to
      *     after users click the OK button on the ‘You have been logged out
-     *     message’. This overrides, the value for bigbluebutton.web.loggedOutURL
-     *     if defined in bigbluebutton.properties
+     *     message’. This overrides, the value for
+     *     bigbluebutton.web.loggedOutURL if defined in bigbluebutton.properties
      *   - record (string): Setting ‘record=true’ instructs the BigBlueButton
      *     server to record the media and events in the session for later
      *     playback. Available values are true or false. Default value is false.
      *   - duration (number): The maximum length (in minutes) for the meeting.
-     *     Normally, the BigBlueButton server will end the meeting when either the
-     *     last person leaves (it takes a minute or two for the server to clear
-     *     the meeting from memory) or when the server receives an end API request
-     *     with the associated meetingID (everyone is kicked and the meeting is
-     *     immediately cleared from memory). BigBlueButton begins tracking the
-     *     length of a meeting when the first person joins. If duration contains a
-     *     non-zero value, then when the length of the meeting exceeds the
-     *     duration value the server will immediately end the meeting (same as
-     *     receiving an end API request).
+     *     Normally, the BigBlueButton server will end the meeting when either
+     *     the last person leaves (it takes a minute or two for the server to
+     *     clear the meeting from memory) or when the server receives an end API
+     *     request with the associated meetingID (everyone is kicked and the
+     *     meeting is immediately cleared from memory). BigBlueButton begins
+     *     tracking the length of a meeting when the first person joins. If
+     *     duration contains a non-zero value, then when the length of the
+     *     meeting exceeds the duration value the server will immediately end
+     *     the meeting (same as receiving an end API request).
      *   - meta (string): You can pass one or more metadata values for create a
      *     meeting. These will be stored by BigBlueButton and later retrievable
      *     via the getMeetingInfo call and getRecordings. Examples of meta
      *     parameters are meta_Presenter, meta_category, meta_LABEL, etc. All
-     *     parameters are converted to lower case, so meta_Presenter would be the
-     *     same as meta_PRESENTER.
+     *     parameters are converted to lower case, so meta_Presenter would be
+     *     the same as meta_PRESENTER.
      *   - moderatorOnlyMessage (string): Display a message to all moderators in
      *     the public chat.
-     *   - autoStartRecording (boolean): Automatically starts recording when first
-     *     user joins. NOTE: Don’t set to autoStartRecording =false and
+     *   - autoStartRecording (boolean): Automatically starts recording when
+     *     first user joins. NOTE: Don’t set to autoStartRecording =false and
      *     allowStartStopRecording=false as the user won’t be able to record.
      *   - allowStartStopRecording (boolean): Allow the user to start/stop
      *     recording. This means the meeting can start recording automatically
      *     (autoStartRecording=true) with the user able to stop/start recording
      *     from the client.
      *
-     * @return \sanduhrs\BigBlueButton\Meeting
+     * @return \sanduhrs\BigBlueButton\Member\Meeting
      *   A meeting object.
      */
-    public function addMeeting($meetingID, $attendeePW, $moderatorPW, $options = [])
+    public function addMeeting($options)
     {
-        $meeting = new Meeting(
-            $meetingID,
-            $attendeePW,
-            $moderatorPW,
-            $options,
-            $this->client
-        );
-        $this->meetings[$meetingID] = $meeting->create($options);
-        return $this->meetings[$meetingID];
+        $meeting = new Meeting($options, $this->client);
+        return $meeting->create();
     }
 
     /**
@@ -161,7 +156,7 @@ class Server
      * @param string $meetingID
      *   The meeting ID.
      *
-     * @return \sanduhrs\BigBlueButton\Meeting|FALSE
+     * @return \sanduhrs\BigBlueButton\Member\Meeting|FALSE
      *   A meeting object or FALSE.
      */
     public function getMeeting($meetingID)
@@ -186,22 +181,30 @@ class Server
         $meetings = [];
         $response = $this->client->get('getMeetings');
 
-        if (isset($response->meetings->meeting) && is_object($response->meetings->meeting)) {
-            $meetings[] = $response->meetings->meeting;
-        } else {
-            $meetings = $response->meetings->meeting;
+        // No meetings were found on this server.
+        if (!isset($response->meetings->meeting)) {
+            return $meetings;
         }
 
-        foreach ($meetings as $meeting) {
-            $this->meetings[$meeting->meetingID] = new Meeting(
-                $meeting->meetingID,
-                $meeting->attendeePW,
-                $meeting->moderatorPW,
-                (array) $meeting,
+        // Found one meeting, initialize it.
+        if (is_object($response->meetings->meeting)) {
+            $meetings[$response->meetings->meeting->meetingID] = new Meeting(
+                (array) $response->meetings->meeting,
                 $this->client
             );
+            return $meetings;
         }
-        return $this->meetings;
+
+        // Found meetings, initialize'em.
+        if (is_array($response->meetings->meeting)) {
+            foreach ($response->meetings->meeting as $options) {
+                $meetings[$options->meetingID] = new Meeting(
+                    (array) $options,
+                    $this->client
+                );
+            }
+        }
+        return $meetings;
     }
 
     /**
@@ -234,21 +237,31 @@ class Server
      */
     public function getRecordings()
     {
+        $recordings = [];
         $response = $this->client->get('getRecordings');
 
-        $recordings = [];
-        if (isset($response->recordings->recording) &&
-            is_object($response->recordings->recording)) {
-            $recordings[] = $response->recordings->recording;
-        } elseif (isset($response->recordings->recording)) {
-            $recordings = $response->recordings->recording;
+        // No meetings were found on this server.
+        if (!isset($response->recordings->recording)) {
+            return $recordings;
         }
-        foreach ($recordings as $recording) {
-            $this->recordings[$recording->recordingID] = new Recording(
-                $recording->recordingID,
-                (array) $recording,
+
+        // Found one meeting, initialize it.
+        if (is_object($response->meetings->meeting)) {
+            $meetings[$response->meetings->meeting->meetingID] = new Meeting(
+                (array) $response->meetings->meeting,
                 $this->client
             );
+            return $meetings;
+        }
+
+        // Found meetings, initialize'em.
+        if (is_array($response->meetings->meeting)) {
+            foreach ($response->meetings->meeting as $options) {
+                $meetings[$options->meetingID] = new Meeting(
+                    (array) $options,
+                    $this->client
+                );
+            }
         }
         return $this->recordings;
     }
@@ -274,16 +287,16 @@ class Server
      *
      * Publish recordings for a set of record IDs.
      *
-     * @param array $recordIDs
+     * @param array $recordingIDs
      *   A set of record IDs to apply the publish action to.
      *
      * @return boolean
      *   The success status as TRUE.
      */
-    public function publishRecordings($recordIDs)
+    public function publishRecordings($recordingIDs)
     {
         $options = [
-            'recordID' => implode(',', $recordIDs),
+            'recordID' => implode(',', $recordingIDs),
             'publish' => 'true',
         ];
         $this->client->get('publishRecordings', $options);
@@ -366,16 +379,14 @@ class Server
     /**
      * Get default config xml.
      *
-     * Retrieve the default config.xml. This call enables a 3rd party application
-     * to get the current config.xml, modify it’s parameters, and use setConfigXML
-     * to store it on the BigBlueButton server (getting a reference token to the
-     * new config.xml), then using the token in as a parameter in the join URL to
-     * override the default config.xml.
+     * Retrieve the default config.xml. This call enables a 3rd party
+     * application to get the current config.xml, modify it’s parameters, and
+     * use setConfigXML to store it on the BigBlueButton server (getting a
+     * reference token to the new config.xml), then using the token in as a
+     * parameter in the join URL to override the default config.xml.
      *
      * @return string
-     *   The default config xml retrieved from the server.
-     *
-     * @throws \sanduhrs\BigBlueButton\BigBlueButtonException
+     * @throws \sanduhrs\BigBlueButton\Exception\BigBlueButtonException
      */
     public function getDefaultConfigXML()
     {
@@ -387,5 +398,25 @@ class Server
             throw new BigBlueButtonException('Could not retrieve default config xml.');
         }
         return $result;
+    }
+
+    /**
+     * Set default config xml.
+     *
+     * Associate a custom config.xml file with the current session. This call
+     * returns a token that can later be passed as a parameter to a join URL.
+     * When passed as a parameter, the BigBlueButton client will use the
+     * associated config.xml for the user instead of using the default
+     * config.xml. This enables 3rd party applications to provide user-specific
+     * config.xml files.
+     *
+     * @param string $xml
+     *
+     * @return bool
+     * @throws \sanduhrs\BigBlueButton\Exception\BigBlueButtonException
+     */
+    public function setDefaultConfigXML($xml)
+    {
+        throw new BigBlueButtonException('Not implemented,yet.');
     }
 }

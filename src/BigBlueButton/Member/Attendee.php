@@ -1,9 +1,11 @@
 <?php
 
-namespace sanduhrs\BigBlueButton;
+namespace sanduhrs\BigBlueButton\Member;
+
+use sanduhrs\BigBlueButton\Client;
 
 /**
- * Class Attendee
+ * Class Attendee.
  *
  * @package sanduhrs\BigBlueButton
  */
@@ -38,23 +40,65 @@ class Attendee
     protected $customdata;
 
     /**
+     * Attendee is a presenter.
+     *
+     * @var bool
+     */
+    protected $isPresenter;
+
+    /**
+     * Attendee is listening only.
+     *
+     * @var bool
+     */
+    protected $isListeningOnly;
+
+    /**
+     * Attendee has joined with voice.
+     *
+     * @var bool
+     */
+    protected $hasJoinedVoice;
+
+    /**
+     * Attendee has joined with video.
+     *
+     * @var bool
+     */
+    protected $hasVideo;
+
+    /**
+     * The BigBlueButton client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
+     */
+    protected $client;
+
+    /**
      * Attendee constructor.
      *
-     * @param string $userID
-     * @param string $fullName
-     * @param string $role
-     * @param array $customdata
+     * @param array $attributes
+     *   - userID
+     *   - fullName
+     *   - role
+     *   - customdata
      */
-    public function __construct(
-        $userID,
-        $fullName,
-        $role,
-        $customdata = []
-    ) {
-        $this->userID = $userID;
-        $this->fullName = $fullName;
-        $this->role = $role;
-        $this->customdata = $customdata;
+    public function __construct($attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            if (property_exists(self::class, $key)) {
+                $this->{$key} = $value;
+            }
+        }
+    }
+
+    /**
+     * Alias for getUserId().
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->getUserId();
     }
 
     /**
@@ -62,7 +106,7 @@ class Attendee
      *
      * @return string
      */
-    public function getUserID()
+    public function getUserId()
     {
         return $this->userID;
     }
@@ -95,5 +139,47 @@ class Attendee
     public function getCustomdata()
     {
         return $this->customdata;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPresenter()
+    {
+        return $this->isPresenter;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isListeningOnly()
+    {
+        return $this->isListeningOnly;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasJoinedVoice()
+    {
+        return $this->hasJoinedVoice;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasVideo()
+    {
+        return $this->hasVideo;
+    }
+
+    /**
+     * Set the client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
     }
 }

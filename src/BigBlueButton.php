@@ -19,7 +19,7 @@ class BigBlueButton
      * @var string
      *   A version string.
      */
-    const VERSION = '0.3.0';
+    const VERSION = '0.4.0';
 
     /**
      * The BigBlueButton API version.
@@ -52,11 +52,77 @@ class BigBlueButton
      * @param string $endpoint
      */
     public function __construct(
-        $url,
-        $secret,
-        $endpoint
+        $url = null,
+        $secret = null,
+        $endpoint = null
     ) {
-        $this->client = new Client($url, $secret, $endpoint);
-        $this->server = new Server($this->client);
+        if (!empty($url) && !empty($secret) && !empty($endpoint)) {
+            $this->client = new Client($url, $secret, $endpoint);
+            $this->server = new Server($this->client);
+        }
+    }
+
+    /**
+     * Get the version.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return self::VERSION;
+    }
+
+    /**
+     * Get the api version.
+     *
+     * @return string
+     */
+    public function getApiVersion()
+    {
+        return self::API_VERSION;
+    }
+
+    /**
+     * Get the server.
+     *
+     * @return \sanduhrs\BigBlueButton\Server
+     */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * Set the server.
+     *
+     * @param \sanduhrs\BigBlueButton\Server $server
+     * @return $this
+     */
+    public function setServer(Server $server)
+    {
+        $this->server = $server;
+        return $this;
+    }
+
+    /**
+     * Get the client.
+     *
+     * @return mixed
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * Set the client.
+     *
+     * @param \sanduhrs\BigBlueButton\Client $client
+     * @return $this
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
+        return $this;
     }
 }

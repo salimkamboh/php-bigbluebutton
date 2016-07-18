@@ -3,7 +3,7 @@
 namespace sanduhrs\BigBlueButton;
 
 use GuzzleHttp\Client as HTTPClient;
-use sanduhrs\BigBlueButton\BigBlueButtonException;
+use sanduhrs\BigBlueButton\Exception\BigBlueButtonException;
 
 /**
  * Class Client
@@ -34,13 +34,6 @@ class Client
     protected $endpoint;
 
     /**
-     * The HTTP client.
-     *
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
-
-    /**
      * Client constructor.
      *
      * @param $url
@@ -69,6 +62,16 @@ class Client
     }
 
     /**
+     * Set URL.
+     *
+     * @return string
+     */
+    public function setUrl($url)
+    {
+        return $this->url = $url;
+    }
+
+    /**
      * Get Secret.
      *
      * @return string
@@ -76,6 +79,16 @@ class Client
     public function getSecret()
     {
         return $this->secret;
+    }
+
+    /**
+     * Set Secret.
+     *
+     * @return string
+     */
+    public function setSecret($secret)
+    {
+        return $this->secret = $secret;
     }
 
     /**
@@ -89,6 +102,16 @@ class Client
     }
 
     /**
+     * Set Endpoint.
+     *
+     * @return string
+     */
+    public function setEndpoint($endpoint)
+    {
+        return $this->endpoint = $endpoint;
+    }
+
+    /**
      * Generate checksum.
      *
      * @param string $call
@@ -99,7 +122,7 @@ class Client
      * @return string
      *   The generated checksum.
      */
-    public function checksum($call, $options)
+    private function checksum($call, $options)
     {
         // Generate query string.
         $query_string = $this->generateQueryString($options);
@@ -115,7 +138,7 @@ class Client
      *
      * @return object
      */
-    public function xml2object($raw_response)
+    private function xml2object($raw_response)
     {
         $xml = simplexml_load_string($raw_response);
         return json_decode(json_encode($xml));
@@ -128,7 +151,7 @@ class Client
      *
      * @return object
      */
-    public function clean($response)
+    private function clean($response)
     {
         if (isset($response->returncode)) {
             unset($response->returncode);
@@ -138,6 +161,15 @@ class Client
         }
         if (isset($response->messageKey)) {
             unset($response->messageKey);
+        }
+        foreach ($response as $key => $value) {
+            if ($value === 'false') {
+                $response->{$key} = false;
+            } elseif ($value === 'true') {
+                $response->{$key} = true;
+            } elseif (is_numeric($value)) {
+                $response->{$key} = (int) $value;
+            }
         }
         return $response;
     }
@@ -151,16 +183,16 @@ class Client
      * @return string
      *   A properly formatted call URL.
      */
-    public function generateURL($call, $options = [])
+    public function generateURL($call, $options = [], $checksum = true)
     {
-        $this->prepareQueryOptions($options);
+        $options = $this->prepareQueryOptions($options);
         $url = implode('', [
             $this->url,
             $this->endpoint,
             $call,
             '?',
             $this->generateQueryString($options),
-            '&checksum=' . $this->checksum($call, $options),
+            ($checksum ? '&checksum=' . $this->checksum($call, $options) : ''),
         ]);
         return $url;
     }
@@ -173,7 +205,7 @@ class Client
      *
      * @return string
      */
-    public function generateQueryString($options = [])
+    private function generateQueryString($options = [])
     {
         $query = array();
         // Encode the options.
@@ -191,11 +223,14 @@ class Client
      *
      * @return array
      */
-    public function prepareQueryOptions($options)
+    private function prepareQueryOptions($options)
     {
+        ksort($options, SORT_STRING);
         foreach ($options as $key => $option) {
             if (is_bool($option)) {
                 $options[$key] = $option ? 'true' : 'false';
+            } elseif (empty($option)) {
+                unset($options[$key]);
             }
         }
         return $options;
@@ -267,15 +302,20 @@ class Client
      */
     public function postRaw($call, $options = [])
     {
-        array_unique($options, SORT_STRING);
+        $url = $this->generateURL($call, $options, false);
         $options = $this->prepareQueryOptions($options);
         $options += [
             'checksum' => $this->checksum($call, $options),
         ];
         $response = $this->client->request(
             'POST',
-            $this->url . $this->endpoint . $call,
-            ['form_params' => $options]
+            $url,
+            [
+              'form_params' => $options,
+              'headers' => [
+                'Content-Type' => 'application/xml',
+              ],
+            ]
         );
         return $response->getBody();
     }
