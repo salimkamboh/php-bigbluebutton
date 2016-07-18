@@ -39,8 +39,8 @@ Initialize a BigBlueButton object:
 
     use sanduhrs\BigBlueButton;
 
-    $url = 'http://192.168.25.92/bigbluebutton/';
-    $secret = '2f63eb730e7956af60351e8f4ad413d4';
+    $url = 'http://example.org/bigbluebutton/';
+    $secret = 'aiShaiteih6nahchie1quaiyul8ce4Zu';
     $endpoint = 'api/';
     
     // Initialize a BigBlueButton object.
@@ -94,8 +94,8 @@ Copy this to a file called 'index.php', adjust the '$url' and '$secret' variable
     
     use sanduhrs\BigBlueButton;
     
-    $url = 'http://192.168.25.92/bigbluebutton/';
-    $secret = '2f63eb730e7956af60351e8f4ad413d4';
+    $url = 'http://example.org/bigbluebutton/';
+    $secret = 'aiShaiteih6nahchie1quaiyul8ce4Zu';
     $endpoint = 'api/';
     
     // Initialize a BigBlueButton object.
@@ -132,8 +132,8 @@ Copy this to a file called 'index.php', adjust the '$url' and '$secret' variable
 
 ## Tests
 
-    export BBB_URI=http://192.168.25.99/bigbluebutton/
-    export BBB_SECRET=afb572b271cab1bc0b2262a9d5b6d981
+    export BBB_URI=http://example.org/bigbluebutton/
+    export BBB_SECRET=aiShaiteih6nahchieq1quaiyul8ce4Zu
     export BBB_ENDPOINT=api/
     ./vendor/bin/phpunit
 

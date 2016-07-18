@@ -10,8 +10,8 @@
          verbose="true">
 
     <php>
-        <env name="BBB_URI" value="http://192.168.25.99/bigbluebutton/"/>
-        <env name="BBB_SECRET" value="afb572b271cab1bc0b2262a9d5b6d981"/>
+        <env name="BBB_URI" value="http://example.org/bigbluebutton/"/>
+        <env name="BBB_SECRET" value="aiShaiteih6nahchie1quaiyul8ce4Zu"/>
         <env name="BBB_ENDPOINT" value="api/"/>
     </php>
 
