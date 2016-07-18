@@ -49,22 +49,19 @@ Initialize a BigBlueButton object:
 Get the version of the remote server:
 
     $version = $bbb->server->getVersion();
-    print "$version\n";
 
 Add a meeting:
 
-    $meeting = $bbb->server->addMeeting(
-          '123-456-789-000',
-          'Guphei4i',
-          'ioy9Xep9',
-          [
-              'name' => 'A BigBlueButton meeting',
-              'welcome' => 'Welcome to %%CONFNAME%%.',
-              'logoutURL' => 'https://example.org/',
-              'record' => true,
-              'autoStartRecording' => true,
-        ]
-    );
+    $meeting = $bbb->server->addMeeting([
+        'id' => '123-456-789-000',
+        'attendeePW' => 'Guphei4i',
+        'moderatorPW' => 'ioy9Xep9',
+        'name' => 'A BigBlueButton meeting',
+        'welcome' => 'Welcome to %%CONFNAME%%.',
+        'logoutURL' => 'https://example.org/',
+        'record' => true,
+        'autoStartRecording' => true,
+    ]);
 
 Get meeting join URL for a moderator:
 
@@ -106,18 +103,16 @@ Copy this to a file called 'index.php', adjust the '$url' and '$secret' variable
     print "$version<br />\n";
     
     // Add a meeting.
-    $meeting = $bbb->server->addMeeting(
-      '123-456-789-000',
-      'Guphei4i',
-      'ioy9Xep9',
-      [
+    $meeting = $bbb->server->addMeeting([
+        'id' => '123-456-789-000',
+        'attendeePW' => 'Guphei4i',
+        'moderatorPW' => 'ioy9Xep9',
         'name' => 'A BigBlueButton meeting',
         'welcome' => 'Welcome to %%CONFNAME%%.',
         'logoutURL' => 'https://example.org/',
         'record' => true,
         'autoStartRecording' => true,
-      ]
-    );
+    ]);
     print '<pre>' . print_r($meeting, true) . "</pre>\n\n";
     
     // Get meeting join URL for a moderator.
