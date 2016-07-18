@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use sanduhrs\BigBlueButton\Server;
 use sanduhrs\BigBlueButton\Client;
 use sanduhrs\BigBlueButton\Member\Meeting;
+use Ramsey\Uuid\Uuid;
 
 class MeetingTest extends TestCase
 {
@@ -76,13 +77,23 @@ class MeetingTest extends TestCase
     }
 
     /**
+     * Generate new unique meeting id.
+     *
+     * @return string
+     */
+    private function generateMeetingId() {
+        $uuid4 = Uuid::uuid4();
+        return $uuid4->toString();
+    }
+
+    /**
      * Create a meeting.
      *
      * @return \sanduhrs\BigBlueButton\Member\Meeting
      */
     private function createMeeting($attributes = []) {
         $attributes += [
-          'id' => rand(1, 99999),
+          'id' => $this->generateMeetingId(),
         ];
 
         $meeting = new Meeting(
@@ -290,7 +301,7 @@ class MeetingTest extends TestCase
 
     public function testCanGetMeetingID() {
         $name = 'id';
-        $value = rand(1, 99999);
+        $value = $this->generateMeetingId();
         $meeting = $this->createMeeting([
           $name => $value,
         ]);
@@ -330,7 +341,7 @@ class MeetingTest extends TestCase
 
     public function testCanGetDialNumber() {
         $name = 'dialNumber';
-        $value = rand(10000, 99999);
+        $value = $this->generateMeetingId();
         $meeting = $this->createMeeting([
           $name => $value,
         ]);
@@ -341,7 +352,7 @@ class MeetingTest extends TestCase
     /**
     public function testCanGetVoiceBridge() {
     $name = 'voiceBridge';
-    $value = rand(10000, 99999);
+    $value = $this->generateMeetingId();
     $meeting = $this->createMeeting([
     $name => $value,
     ]);
@@ -352,7 +363,7 @@ class MeetingTest extends TestCase
 
     public function testCanGetWebVoice() {
         $name = 'webVoice';
-        $value = rand(10000, 99999);
+        $value = $this->generateMeetingId();
         $meeting = $this->createMeeting([
           $name => $value,
         ]);

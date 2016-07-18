@@ -75,7 +75,8 @@ class ServerTest extends TestCase
      * @return string
      */
     private function generateMeetingId() {
-        return (string) rand(1, 9999999);
+        $uuid4 = Uuid::uuid4();
+        return $uuid4->toString();
     }
 
     public function testHasClient() {
