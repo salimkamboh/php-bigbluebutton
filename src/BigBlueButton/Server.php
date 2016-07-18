@@ -4,7 +4,6 @@ namespace sanduhrs\BigBlueButton;
 
 use sanduhrs\BigBlueButton\Exception\BigBlueButtonException;
 use sanduhrs\BigBlueButton\Member\Meeting;
-use sanduhrs\BigBlueButton\Member\Recording;
 
 /**
  * Class Server
@@ -215,7 +214,7 @@ class Server
      * @param string $recordingID
      *   The recording ID.
      *
-     * @return \sanduhrs\BigBlueButton\Recording|FALSE
+     * @return \sanduhrs\BigBlueButton\Member\Recording|FALSE
      *   An recording object or FALSE.
      */
     public function getRecording($recordingID)
@@ -233,7 +232,7 @@ class Server
      * Retrieves the recordings that are available for playback.
      *
      * @return array
-     *   An array of \sanduhrs\BigBlueButton\Recording.
+     *   An array of \sanduhrs\BigBlueButton\Member\Recording.
      */
     public function getRecordings()
     {

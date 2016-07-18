@@ -3,7 +3,6 @@
 namespace sanduhrs\BigBlueButton\Member;
 
 use sanduhrs\BigBlueButton\Client;
-use sanduhrs\BigBlueButton\Member\Document;
 
 /**
  * Class Meeting
