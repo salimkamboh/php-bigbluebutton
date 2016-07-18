@@ -1,8 +1,8 @@
 <?php
 
-namespace sanduhrs\BigBlueButton;
+namespace sanduhrs\BigBlueButton\Member;
 
-use sanduhrs\BigBlueButton\Server;
+use sanduhrs\BigBlueButton\Client;
 
 /**
  * Class Recording.
@@ -11,13 +11,6 @@ use sanduhrs\BigBlueButton\Server;
  */
 class Recording
 {
-    /**
-     * The BigBlueButton client.
-     *
-     * @var \sanduhrs\BigBlueButton\Client
-     */
-    protected $client;
-
     /**
      * The record id.
      *
@@ -45,6 +38,11 @@ class Recording
      * @var boolean
      */
     protected $published;
+
+    /**
+     * @var string
+     */
+    protected $state;
 
     /**
      * The start time.
@@ -75,29 +73,29 @@ class Recording
     protected $playback;
 
     /**
+     * The BigBlueButton client.
+     *
+     * @var \sanduhrs\BigBlueButton\Client
+     */
+    protected $client;
+
+    /**
      * Recording constructor.
      *
-     * @param string $recordID
      * @param array $options
-     * @param \sanduhrs\BigBlueButton\Client $client
      */
-    public function __construct(
-        $recordID,
-        $options,
-        $client
-    ) {
-        $options = [
+    public function __construct($options) {
+        $options += [
+            'recordID' => '',
             'meetingID' => '',
             'name' => '',
-            'published' => null,
-            'startTime' => 0,
-            'endTime' => 0,
+            'published' => '',
+            'state' => '',
+            'startTime' => '',
+            'endTime' => '',
             'metadata' => [],
             'playback' => [],
-        ] + $options;
-
-        $this->recordID = $recordID;
-        $this->client = $client;
+        ];
 
         foreach ($options as $key => $value) {
             if(isset($this->{$key})) {

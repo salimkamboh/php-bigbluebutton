@@ -1,6 +1,6 @@
 <?php
 
-namespace sanduhrs\BigBlueButton;
+namespace sanduhrs\BigBlueButton\Exception;
 
 use Exception;
 

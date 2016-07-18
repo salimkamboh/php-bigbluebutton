@@ -150,11 +150,11 @@ class Meeting
      * @param \sanduhrs\BigBlueButton\Client $client
      */
     public function __construct(
-        $meetingID,
-        $attendeePW,
-        $moderatorPW,
-        $options,
-        Client $client
+      $meetingID,
+      $attendeePW,
+      $moderatorPW,
+      $options,
+      Client $client
     ) {
         $options = [
             'createTime' => 0,
@@ -187,6 +187,15 @@ class Meeting
                 $this->{$key} = $value;
             }
         }
+    }
+
+    /**
+     * Alias for getMeetingID().
+     *
+     * @return string
+     */
+    public function id() {
+        $this->getMeetingID();
     }
 
     /**
@@ -367,6 +376,62 @@ class Meeting
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    /**
+     * @param string $meetingID
+     */
+    public function setMeetingID($meetingID)
+    {
+        $this->meetingID = $meetingID;
+    }
+
+    /**
+     * @param string $attendeePW
+     */
+    public function setAttendeePW($attendeePW)
+    {
+        $this->attendeePW = $attendeePW;
+    }
+
+    /**
+     * @param string $moderatorPW
+     */
+    public function setModeratorPW($moderatorPW)
+    {
+        $this->moderatorPW = $moderatorPW;
+    }
+
+    /**
+     * @param string $meetingName
+     */
+    public function setMeetingName($meetingName)
+    {
+        $this->meetingName = $meetingName;
+    }
+
+    /**
+     * @param string $voiceBridge
+     */
+    public function setVoiceBridge($voiceBridge)
+    {
+        $this->voiceBridge = $voiceBridge;
+    }
+
+    /**
+     * @param string $dialNumber
+     */
+    public function setDialNumber($dialNumber)
+    {
+        $this->dialNumber = $dialNumber;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
     }
 
     /**
