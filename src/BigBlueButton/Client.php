@@ -3,6 +3,7 @@
 namespace sanduhrs\BigBlueButton;
 
 use GuzzleHttp\Client as HTTPClient;
+use GuzzleHttp\Psr7\Uri;
 use sanduhrs\BigBlueButton\Exception\BigBlueButtonException;
 
 /**
@@ -13,11 +14,11 @@ use sanduhrs\BigBlueButton\Exception\BigBlueButtonException;
 class Client
 {
     /**
-     * The server URL.
+     * The server URI.
      *
-     * @var string
+     * @var \GuzzleHttp\Psr7\Uri
      */
-    protected $url;
+    protected $uri;
 
     /**
      * The server secret.
@@ -36,39 +37,39 @@ class Client
     /**
      * Client constructor.
      *
-     * @param $url
-     * @param $secret
-     * @param $endpoint
+     * @param string $uri
+     * @param string $secret
+     * @param string $endpoint
      */
     public function __construct(
-        $url,
+        $uri,
         $secret,
         $endpoint
     ) {
-        $this->url = $url;
+        $this->uri = new Uri($uri);
         $this->secret = $secret;
         $this->endpoint = $endpoint;
         $this->client = new HTTPClient();
     }
 
     /**
-     * Get URL.
+     * Get URI.
      *
-     * @return string
+     * @return \GuzzleHttp\Psr7\Uri
      */
-    public function getUrl()
+    public function getUri()
     {
-        return $this->url;
+        return $this->uri;
     }
 
     /**
-     * Set URL.
+     * Set URI.
      *
-     * @return string
+     * @return \GuzzleHttp\Psr7\Uri
      */
-    public function setUrl($url)
+    public function setUri(Uri $uri)
     {
-        return $this->url = $url;
+        return $this->uri = $uri;
     }
 
     /**
@@ -175,26 +176,26 @@ class Client
     }
 
     /**
-     * Generate call URL.
+     * Generate call URI.
      *
      * @params array $options
      *   The query parameters.
      *
      * @return string
-     *   A properly formatted call URL.
+     *   A properly formatted call URI.
      */
-    public function generateURL($call, $options = [], $checksum = true)
+    public function generateURI($call, $options = [], $checksum = true)
     {
         $options = $this->prepareQueryOptions($options);
-        $url = implode('', [
-            $this->url,
+        $uri = new Uri(implode('', [
+            $this->uri,
             $this->endpoint,
             $call,
             '?',
             $this->generateQueryString($options),
             ($checksum ? '&checksum=' . $this->checksum($call, $options) : ''),
-        ]);
-        return $url;
+        ]));
+        return $uri;
     }
 
     /**
@@ -255,7 +256,7 @@ class Client
         ];
         $response = $this->client->request(
             'GET',
-            $this->url . $this->endpoint . $call,
+            $this->uri . $this->endpoint . $call,
             ['query' => $options]
         );
         return $response->getBody();
@@ -302,14 +303,14 @@ class Client
      */
     public function postRaw($call, $options = [])
     {
-        $url = $this->generateURL($call, $options, false);
+        $uri = $this->generateURI($call, $options, false);
         $options = $this->prepareQueryOptions($options);
         $options += [
             'checksum' => $this->checksum($call, $options),
         ];
         $response = $this->client->request(
             'POST',
-            $url,
+            $uri,
             [
               'form_params' => $options,
               'headers' => [

@@ -2,6 +2,7 @@
 
 namespace sanduhrs;
 
+use GuzzleHttp\Psr7\Uri;
 use sanduhrs\BigBlueButton\Server;
 use sanduhrs\BigBlueButton\Client;
 
@@ -47,17 +48,18 @@ class BigBlueButton
     /**
      * BigBlueButton constructor.
      *
-     * @param string $url
+     * @param string $uri
      * @param string $secret
      * @param string $endpoint
      */
     public function __construct(
-        $url = null,
+        $uri = null,
         $secret = null,
         $endpoint = null
     ) {
-        if (!empty($url) && !empty($secret) && !empty($endpoint)) {
-            $this->client = new Client($url, $secret, $endpoint);
+        if (!empty($uri) && !empty($secret) && !empty($endpoint)) {
+            $uri = new Uri($uri);
+            $this->client = new Client($uri, $secret, $endpoint);
             $this->server = new Server($this->client);
         }
     }

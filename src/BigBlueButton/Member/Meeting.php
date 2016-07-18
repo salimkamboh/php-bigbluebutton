@@ -1041,8 +1041,8 @@ class Meeting
             'meetingID' => $this->meetingID,
             'password' => $moderator ? $this->moderatorPW : $this->attendeePW,
         ];
-        $url = $this->client->generateURL('join', $options);
-        return $url;
+        $uri = $this->client->generateURI('join', $options);
+        return $uri;
     }
 
     /**

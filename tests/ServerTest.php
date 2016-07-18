@@ -1,18 +1,20 @@
 <?php
 
+use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use sanduhrs\BigBlueButton\Server;
 use sanduhrs\BigBlueButton\Client;
+use Ramsey\Uuid\Uuid;
 
 class ServerTest extends TestCase
 {
 
     /**
-     * The server url.
+     * The server uri.
      *
-     * @var string
+     * @var \GuzzleHttp\Psr7\Uri
      */
-    protected $url;
+    protected $uri;
 
     /**
      * The server secret.
@@ -52,12 +54,12 @@ class ServerTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
-        $this->url = getenv('BBB_URL');
+        $this->uri = new Uri(getenv('BBB_URI'));
         $this->secret = getenv('BBB_SECRET');
         $this->endpoint = getenv('BBB_ENDPOINT');
 
         $this->client = new Client(
-          $this->url,
+          $this->uri,
           $this->secret,
           $this->endpoint
         );

@@ -3,6 +3,7 @@
 namespace sanduhrs\BigBlueButton\Member;
 
 use sanduhrs\BigBlueButton\Client;
+use GuzzleHttp\Psr7\Uri;
 
 /**
  * Class Document.
@@ -12,11 +13,11 @@ use sanduhrs\BigBlueButton\Client;
 class Document
 {
     /**
-     * The URL.
+     * The URI.
      *
-     * @var string
+     * @var \GuzzleHttp\Psr7\Uri
      */
-    protected $url;
+    protected $uri;
 
     /**
      * The name.
@@ -42,36 +43,36 @@ class Document
     /**
      * Document constructor.
      *
-     * @param $url
+     * @param $uri
      * @param string $name
      * @param bool $embed
      */
-    public function __construct($url, $name = '', $embed = false)
+    public function __construct($uri, $name = '', $embed = false)
     {
-        $this->url = $url;
+        $this->uri = new Uri($uri);
         $this->name = $name;
         $this->embed = $embed;
     }
 
     /**
-     * Get the URL.
+     * Get the URI.
      *
-     * @return string
+     * @return \GuzzleHttp\Psr7\Uri
      */
-    public function getUrl()
+    public function getUri()
     {
-        return $this->url;
+        return $this->uri;
     }
 
     /**
-     * Set the URL.
+     * Set the URI.
      *
-     * @param string $url
+     * @param \GuzzleHttp\Psr7\Uri $uri
      * @return Document
      */
-    public function setUrl($url)
+    public function setUri(Uri $uri)
     {
-        $this->url = $url;
+        $this->uri = $uri;
         return $this;
     }
 
