@@ -1,20 +1,21 @@
 <?php
 
+use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 use sanduhrs\BigBlueButton\Server;
 use sanduhrs\BigBlueButton\Client;
 use sanduhrs\BigBlueButton\Member\Meeting;
-use Ramsey\Uuid\Uuid;
 
 class MeetingTest extends TestCase
 {
 
     /**
-     * The server url.
+     * The server uri.
      *
-     * @var string
+     * @var \GuzzleHttp\Psr7\Uri
      */
-    protected $url;
+    protected $uri;
 
     /**
      * The server secret.
@@ -61,12 +62,12 @@ class MeetingTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
-        $this->url = getenv('BBB_URL');
+        $this->uri = new Uri(getenv('BBB_URI'));
         $this->secret = getenv('BBB_SECRET');
         $this->endpoint = getenv('BBB_ENDPOINT');
 
         $this->client = new Client(
-          $this->url,
+          $this->uri,
           $this->secret,
           $this->endpoint
         );
@@ -115,15 +116,15 @@ class MeetingTest extends TestCase
 
     public function testCanJoinMeetingAsAttendee() {
         $meeting = $this->createMeeting();
-        $url = $meeting->join('Username', false);
-        $valid = (bool) filter_var($url, FILTER_VALIDATE_URL);
+        $uri = $meeting->join('Username', false);
+        $valid = (bool) filter_var($uri, FILTER_VALIDATE_URL);
         $this->assertTrue($valid);
     }
 
     public function testCanJoinMeetingAsModerator() {
         $meeting = $this->createMeeting();
-        $url = $meeting->join('Username', true);
-        $valid = (boolean) filter_var($url, FILTER_VALIDATE_URL);
+        $uri = $meeting->join('Username', true);
+        $valid = (boolean) filter_var($uri, FILTER_VALIDATE_URL);
         $this->assertTrue($valid);
     }
 
