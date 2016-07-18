@@ -132,6 +132,9 @@ Copy this to a file called 'index.php', adjust the '$url' and '$secret' variable
 
 ## Tests
 
+    export BBB_URI=http://192.168.25.99/bigbluebutton/
+    export BBB_SECRET=afb572b271cab1bc0b2262a9d5b6d981
+    export BBB_ENDPOINT=api/
     ./vendor/bin/phpunit
 
 ## License
