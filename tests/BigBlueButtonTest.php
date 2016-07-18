@@ -1,5 +1,7 @@
 <?php
 
+namespace sanduhrs\bigbluebutton\tests;
+
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use sanduhrs\BigBlueButton;
@@ -42,7 +44,8 @@ class BigBlueButtonTest extends TestCase
      * @param array $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = [], $dataName = '') {
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
         parent::__construct($name, $data, $dataName);
 
         $this->uri = new Uri(getenv('BBB_URI'));
@@ -50,9 +53,9 @@ class BigBlueButtonTest extends TestCase
         $this->endpoint = getenv('BBB_ENDPOINT');
 
         $this->bigBlueButton = new BigBlueButton(
-          $this->uri,
-          $this->secret,
-          $this->endpoint
+            $this->uri,
+            $this->secret,
+            $this->endpoint
         );
     }
 
@@ -68,7 +71,8 @@ class BigBlueButtonTest extends TestCase
         $this->assertNotEmpty($api_version);
     }
 
-    public function testHasServer() {
+    public function testHasServer()
+    {
         $this->assertObjectHasAttribute('server', $this->bigBlueButton);
     }
 
@@ -78,7 +82,8 @@ class BigBlueButtonTest extends TestCase
         $this->assertNotEmpty($server);
     }
 
-    public function testHasClient() {
+    public function testHasClient()
+    {
         $this->assertObjectHasAttribute('client', $this->bigBlueButton);
     }
 
@@ -87,5 +92,4 @@ class BigBlueButtonTest extends TestCase
         $client = $this->bigBlueButton->getClient();
         $this->assertNotEmpty($client);
     }
-
 }

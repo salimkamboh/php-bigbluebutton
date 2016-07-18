@@ -1,5 +1,7 @@
 <?php
 
+namespace sanduhrs\bigbluebutton\tests;
+
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use sanduhrs\BigBlueButton\Server;
@@ -51,7 +53,8 @@ class ServerTest extends TestCase
      * @param array $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = [], $dataName = '') {
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
         parent::__construct($name, $data, $dataName);
 
         $this->uri = new Uri(getenv('BBB_URI'));
@@ -59,13 +62,13 @@ class ServerTest extends TestCase
         $this->endpoint = getenv('BBB_ENDPOINT');
 
         $this->client = new Client(
-          $this->uri,
-          $this->secret,
-          $this->endpoint
+            $this->uri,
+            $this->secret,
+            $this->endpoint
         );
 
         $this->server = new Server(
-          $this->client
+            $this->client
         );
     }
 
@@ -74,21 +77,25 @@ class ServerTest extends TestCase
      *
      * @return string
      */
-    private function generateMeetingId() {
+    private function generateMeetingId()
+    {
         $uuid4 = Uuid::uuid4();
         return $uuid4->toString();
     }
 
-    public function testHasClient() {
+    public function testHasClient()
+    {
         $this->assertObjectHasAttribute('client', $this->server);
     }
 
-    public function testCanGetVersion() {
+    public function testCanGetVersion()
+    {
         $version = $this->server->getVersion();
         $this->assertNotEmpty($version);
     }
 
-    public function testCanAddMeeting() {
+    public function testCanAddMeeting()
+    {
         $meeting = $this->server->addMeeting([
           'meetingID' => $this->generateMeetingId(),
         ]);
@@ -96,7 +103,8 @@ class ServerTest extends TestCase
         $this->assertNotEmpty($meeting_id);
     }
 
-    public function testCanGetMeeting() {
+    public function testCanGetMeeting()
+    {
         $meeting_1 = $this->server->addMeeting([
           'meetingID' => $this->generateMeetingId(),
         ]);
@@ -107,7 +115,8 @@ class ServerTest extends TestCase
         $this->assertNotEmpty($meeting_id_2);
     }
 
-    public function testCanGetMeetings() {
+    public function testCanGetMeetings()
+    {
         // Create a handful of meetings.
         $j = 3;
         for ($i = 0; $i < $j; $i++) {
@@ -133,5 +142,4 @@ class ServerTest extends TestCase
     //public function testCanUnPublishRecordings() {}
     //public function testCanDeleteRecording() {}
     //public function testCanDeleteRecordings() {}
-
 }

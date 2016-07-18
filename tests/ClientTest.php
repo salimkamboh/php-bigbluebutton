@@ -1,8 +1,9 @@
 <?php
 
+namespace sanduhrs\bigbluebutton\tests;
+
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
-use sanduhrs\BigBlueButton\Server;
 use sanduhrs\BigBlueButton\Client;
 
 class ClientTest extends TestCase
@@ -43,7 +44,8 @@ class ClientTest extends TestCase
      * @param array $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = [], $dataName = '') {
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
         parent::__construct($name, $data, $dataName);
 
         $this->uri = new Uri(getenv('BBB_URI'));
@@ -51,37 +53,42 @@ class ClientTest extends TestCase
         $this->endpoint = getenv('BBB_ENDPOINT');
 
         $this->client = new Client(
-          $this->uri,
-          $this->secret,
-          $this->endpoint
+            $this->uri,
+            $this->secret,
+            $this->endpoint
         );
     }
 
-    public function testHasUri() {
+    public function testHasUri()
+    {
         $this->assertObjectHasAttribute('uri', $this->client);
     }
 
-    public function testCanGetUri() {
+    public function testCanGetUri()
+    {
         $uri = $this->client->getUri();
         $this->assertNotEmpty($uri);
     }
 
-    public function testHasSecret() {
+    public function testHasSecret()
+    {
         $this->assertObjectHasAttribute('secret', $this->client);
     }
 
-    public function testCanGetSecret() {
+    public function testCanGetSecret()
+    {
         $secret = $this->client->getSecret();
         $this->assertNotEmpty($secret);
     }
 
-    public function testHasEndpoint() {
+    public function testHasEndpoint()
+    {
         $this->assertObjectHasAttribute('endpoint', $this->client);
     }
 
-    public function testCanGetEndpoint() {
+    public function testCanGetEndpoint()
+    {
         $endpoint = $this->client->getEndpoint();
         $this->assertNotEmpty($endpoint);
     }
-
 }
