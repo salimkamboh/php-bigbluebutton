@@ -256,7 +256,7 @@ class Client
         ];
         $response = $this->client->request(
             'GET',
-            $this->uri . $this->endpoint . $call,
+            $this->uri . $this->endpoint,
             ['query' => $options]
         );
         return $response->getBody();
